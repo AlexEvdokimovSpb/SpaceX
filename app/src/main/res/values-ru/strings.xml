@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SpaceX</string>
+    <string name="new_dates_first">новые даты вначале</string>
+    <string name="old_dates_first">старые даты вначале</string>
+</resources>
