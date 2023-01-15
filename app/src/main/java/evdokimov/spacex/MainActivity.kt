@@ -1,10 +1,8 @@
-package evdokimov.spacex.main
+package evdokimov.spacex
 
 import android.os.Bundle
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.androidx.AppNavigator
-import evdokimov.spacex.App
-import evdokimov.spacex.R
 import evdokimov.spacex.databinding.ActivityMainBinding
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter

@@ -1,17 +1,16 @@
 package evdokimov.spacex.details.presentation
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import evdokimov.spacex.App
+import evdokimov.spacex.BackClickListener
+import evdokimov.spacex.base.BasicFragment
 import evdokimov.spacex.databinding.FragmentDetailsBinding
 import evdokimov.spacex.image.ImageLoader
-import evdokimov.spacex.main.BackClickListener
 import evdokimov.spacex.news.domain.entity.Launch
-import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
-class DetailsFragment : MvpAppCompatFragment(), DetailsView, BackClickListener {
+class DetailsFragment : BasicFragment<FragmentDetailsBinding>(FragmentDetailsBinding::inflate), DetailsView,
+    BackClickListener {
 
     private val presenter: DetailsPresenter by moxyPresenter {
         val launch = arguments?.getParcelable<Launch>(LAUNCH_ARG) as Launch
@@ -20,21 +19,7 @@ class DetailsFragment : MvpAppCompatFragment(), DetailsView, BackClickListener {
         }
     }
 
-    private var vb: FragmentDetailsBinding? = null
     val imageLoader = ImageLoader()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ) = FragmentDetailsBinding.inflate(inflater, container, false).also {
-        vb = it
-    }.root
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        vb = null
-    }
 
     override fun backPressed() = presenter.backClick()
 
@@ -50,18 +35,18 @@ class DetailsFragment : MvpAppCompatFragment(), DetailsView, BackClickListener {
     }
 
     override fun setName(name: String) {
-        vb?.tvName?.text = name
+        binding.tvName.text = name
     }
 
     override fun loadImage(url: String) {
-        vb?.ivImage?.let { imageLoader.load(url, it) }
+        binding.ivImage.let { imageLoader.load(url, it) }
     }
 
     override fun setDate(date: String) {
-        vb?.tvDate?.text = date
+        binding.tvDate.text = date
     }
 
     override fun setDetails(details: String) {
-        vb?.tvDetails?.text = details
+        binding.tvDetails.text = details
     }
 }

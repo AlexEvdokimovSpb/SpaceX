@@ -1,11 +1,11 @@
-package evdokimov.spacex.main
+package evdokimov.spacex
 
 import com.github.terrakok.cicerone.Router
+import evdokimov.spacex.base.BaseMvpPresenter
 import evdokimov.spacex.navigation.IScreens
-import moxy.MvpPresenter
 import javax.inject.Inject
 
-class MainPresenter : MvpPresenter<MainView>() {
+class MainPresenter : BaseMvpPresenter<MainView>() {
 
     @Inject
     lateinit var router: Router

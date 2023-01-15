@@ -5,22 +5,19 @@ import android.view.*
 import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import evdokimov.spacex.App
-import evdokimov.spacex.R
+import evdokimov.spacex.*
+import evdokimov.spacex.base.BasicFragment
 import evdokimov.spacex.databinding.FragmentNewsBinding
-import evdokimov.spacex.main.BackClickListener
 import evdokimov.spacex.news.presentation.list.NewsAdapter
-import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
-class NewsFragment : MvpAppCompatFragment(), NewsView, BackClickListener {
+class NewsFragment : BasicFragment<FragmentNewsBinding>(FragmentNewsBinding::inflate), NewsView, BackClickListener {
 
     private val presenter by moxyPresenter {
         NewsPresenter().apply {
             App.instance.appComponent.inject(this)
         }
     }
-    private var vb: FragmentNewsBinding? = null
     private var adapter: NewsAdapter? = null
     private var isSorted = true
 
@@ -29,28 +26,15 @@ class NewsFragment : MvpAppCompatFragment(), NewsView, BackClickListener {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ) = FragmentNewsBinding.inflate(inflater, container, false).also {
-        vb = it
-    }.root
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        vb = null
-    }
-
     override fun init() {
-        vb?.rvList?.layoutManager = LinearLayoutManager(requireContext())
-        vb?.rvList?.addItemDecoration(
+        binding.rvList.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvList.addItemDecoration(
             DividerItemDecoration(
                 requireContext(), LinearLayoutManager.VERTICAL
             )
         )
         adapter = NewsAdapter(presenter.launchesListPresenter)
-        vb?.rvList?.adapter = adapter
+        binding.rvList.adapter = adapter
     }
 
     override fun updateList() {

@@ -1,6 +1,7 @@
 package evdokimov.spacex.news.presentation
 
 import com.github.terrakok.cicerone.Router
+import evdokimov.spacex.base.BaseMvpPresenter
 import evdokimov.spacex.navigation.IScreens
 import evdokimov.spacex.news.domain.NewsInteractor
 import evdokimov.spacex.news.domain.entity.Launch
@@ -8,13 +9,12 @@ import evdokimov.spacex.news.presentation.list.INewsItemView
 import evdokimov.spacex.news.presentation.list.INewsListPresenter
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.schedulers.Schedulers
-import moxy.MvpPresenter
 import javax.inject.Inject
 import javax.inject.Named
 
 private const val NUMBER_CHAR_TO_DELETE = 14
 
-class NewsPresenter : MvpPresenter<NewsView>() {
+class NewsPresenter : BaseMvpPresenter<NewsView>() {
 
     @Inject
     @field:Named("uiScheduler")
@@ -75,7 +75,7 @@ class NewsPresenter : MvpPresenter<NewsView>() {
                 loadData()
             }, {
                 println("Error: ${it.message}")
-            })
+            }).autoDisposable()
 
         launchesListPresenter.itemClickListener = { view ->
             val launch = launchesListPresenter.launches[view.pos]
@@ -85,12 +85,12 @@ class NewsPresenter : MvpPresenter<NewsView>() {
 
     fun loadData() {
         newsInteractor.getAuthorisedLaunches().subscribeOn(Schedulers.io()).observeOn(uiScheduler).subscribe({ repos ->
-                launchesListPresenter.launches.clear()
-                launchesListPresenter.launches.addAll(repos)
-                viewState.updateList()
-            }, {
-                println("Error: ${it.message}")
-            })
+            launchesListPresenter.launches.clear()
+            launchesListPresenter.launches.addAll(repos)
+            viewState.updateList()
+        }, {
+            println("Error: ${it.message}")
+        })
     }
 
     fun backClick(): Boolean {

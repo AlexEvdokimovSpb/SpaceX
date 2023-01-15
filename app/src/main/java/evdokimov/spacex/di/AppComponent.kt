@@ -3,8 +3,8 @@ package evdokimov.spacex.di
 import dagger.Component
 import evdokimov.spacex.details.presentation.DetailsPresenter
 import evdokimov.spacex.di.module.*
-import evdokimov.spacex.main.MainActivity
-import evdokimov.spacex.main.MainPresenter
+import evdokimov.spacex.MainActivity
+import evdokimov.spacex.MainPresenter
 import evdokimov.spacex.news.presentation.NewsPresenter
 import javax.inject.Singleton
 

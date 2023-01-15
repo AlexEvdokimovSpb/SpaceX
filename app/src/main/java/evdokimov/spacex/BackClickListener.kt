@@ -1,4 +1,4 @@
-package evdokimov.spacex.main
+package evdokimov.spacex
 
 interface BackClickListener {
     fun backPressed(): Boolean
