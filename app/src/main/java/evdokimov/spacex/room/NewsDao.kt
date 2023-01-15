@@ -1,7 +1,7 @@
 package evdokimov.spacex.room
 
 import androidx.room.*
-import evdokimov.spacex.news.data.entity.LaunchRoom
+import evdokimov.spacex.room.entity.LaunchEntity
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 
@@ -9,32 +9,32 @@ import io.reactivex.rxjava3.core.Single
 interface NewsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(launch: LaunchRoom): Completable
+    fun insert(launch: LaunchEntity): Completable
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(vararg launch: LaunchRoom): Completable
+    fun insert(vararg launch: LaunchEntity): Completable
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(launches: List<LaunchRoom>): Completable
+    fun insert(launches: List<LaunchEntity>): Completable
 
     @Update
-    fun update(launch: LaunchRoom): Completable
+    fun update(launch: LaunchEntity): Completable
 
     @Update
-    fun update(vararg launch: LaunchRoom): Completable
+    fun update(vararg launch: LaunchEntity): Completable
 
     @Update
-    fun update(launches: List<LaunchRoom>): Completable
+    fun update(launches: List<LaunchEntity>): Completable
 
     @Delete
-    fun delete(launch: LaunchRoom): Completable
+    fun delete(launch: LaunchEntity): Completable
 
     @Delete
-    fun delete(vararg launch: LaunchRoom): Completable
+    fun delete(vararg launch: LaunchEntity): Completable
 
     @Delete
-    fun delete(launches: List<LaunchRoom>): Completable
+    fun delete(launches: List<LaunchEntity>): Completable
 
     @Query("SELECT * FROM Launch")
-    fun getAll(): Single<List<LaunchRoom>>
+    fun getAll(): Single<List<LaunchEntity>>
 }

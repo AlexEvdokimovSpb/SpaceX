@@ -6,7 +6,7 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 
 interface NewsRepositoryApi {
-//    fun getLaunches(): Single<List<Launch>>
+
     fun fetchAuthorisedLaunches() : Completable
 
     fun getAuthorisedLaunches(): Single<List<Launch>>

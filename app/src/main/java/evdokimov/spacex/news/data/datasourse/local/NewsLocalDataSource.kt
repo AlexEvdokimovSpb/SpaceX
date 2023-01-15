@@ -1,19 +1,18 @@
 package evdokimov.spacex.news.data.datasourse.local
 
-import evdokimov.spacex.news.data.entity.LaunchRoom
-import evdokimov.spacex.room.Database
+import evdokimov.spacex.room.NewsDao
+import evdokimov.spacex.room.entity.LaunchEntity
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class NewsLocalDataSource(
-    val db: Database
+    private val newsDao: NewsDao,
 ) : NewsLocalDataSourceApi {
 
-    override fun putLaunches(launches: List<LaunchRoom>): Completable = db.spaceXDAO.insert(launches)
-        .subscribeOn(Schedulers.computation())
+    override fun putLaunches(launches: List<LaunchEntity>): Completable =
+        newsDao.insert(launches).subscribeOn(Schedulers.computation())
 
-    override fun getLaunches(): Single<List<LaunchRoom>> = db.spaceXDAO.getAll()
-        .subscribeOn(Schedulers.computation())
+    override fun getLaunches(): Single<List<LaunchEntity>> = newsDao.getAll().subscribeOn(Schedulers.computation())
 }
 

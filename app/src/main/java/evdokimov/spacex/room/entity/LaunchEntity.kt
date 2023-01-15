@@ -1,10 +1,10 @@
-package evdokimov.spacex.news.data.entity
+package evdokimov.spacex.room.entity
 
 import androidx.room.*
 
 @Entity(tableName = "Launch")
-data class LaunchRoom(
-    @Embedded(prefix = "links") val links: LinksRoom?,
+data class LaunchEntity(
+    @Embedded(prefix = "links") val links: LinksEntity?,
     @ColumnInfo(name = "success") val success: Boolean?,
     @ColumnInfo(name = "details") val details: String?,
     @ColumnInfo(name = "flight_number") val flightNumber: Int?,

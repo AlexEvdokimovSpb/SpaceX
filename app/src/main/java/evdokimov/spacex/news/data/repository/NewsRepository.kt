@@ -16,7 +16,7 @@ class NewsRepository(
     override fun fetchAuthorisedLaunches(): Completable =
         newsRemoteDataSource.fetchAuthorisedLaunches().map { launchDtos ->
             launchDtos.map { launchDto ->
-                newsMapper.createLaunchRoom(launchDto)
+                newsMapper.createLaunchEntity(launchDto)
             }
         }.flatMapCompletable { launchRoom ->
             newsLocalDataSource.putLaunches(launchRoom)

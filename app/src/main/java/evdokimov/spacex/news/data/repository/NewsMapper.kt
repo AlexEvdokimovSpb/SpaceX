@@ -2,29 +2,30 @@ package evdokimov.spacex.news.data.repository
 
 import evdokimov.spacex.news.data.entity.*
 import evdokimov.spacex.news.domain.entity.*
+import evdokimov.spacex.room.entity.*
 
 class NewsMapper {
 
-    fun createLaunch(launchRoom: LaunchRoom): Launch = Launch(
-        links = createLinks(launchRoom.links),
-        success = launchRoom.success,
-        details = launchRoom.details,
-        flightNumber = launchRoom.flightNumber,
-        name = launchRoom.name,
-        dateUtc = launchRoom.dateUtc,
-        id = launchRoom.id
+    fun createLaunch(launchEntity: LaunchEntity): Launch = Launch(
+        links = createLinks(launchEntity.links),
+        success = launchEntity.success,
+        details = launchEntity.details,
+        flightNumber = launchEntity.flightNumber,
+        name = launchEntity.name,
+        dateUtc = launchEntity.dateUtc,
+        id = launchEntity.id
     )
 
-    private fun createLinks(linksRoom: LinksRoom?): Links = Links(
-        flickr = createFlickr(linksRoom?.flickr)
+    private fun createLinks(linksEntity: LinksEntity?): Links = Links(
+        flickr = createFlickr(linksEntity?.flickr)
     )
 
-    private fun createFlickr(flickrRoom: FlickrRoom?): Flickr = Flickr(
-        original = flickrRoom?.original
+    private fun createFlickr(flickrEntity: FlickrEntity?): Flickr = Flickr(
+        original = flickrEntity?.original
     )
 
-    fun createLaunchRoom(launchDto: LaunchDto): LaunchRoom = LaunchRoom(
-        links = createLinksRoom(launchDto.links),
+    fun createLaunchEntity(launchDto: LaunchDto): LaunchEntity = LaunchEntity(
+        links = createLinksEntity(launchDto.links),
         success = launchDto.success,
         details = launchDto.details,
         flightNumber = launchDto.flightNumber,
@@ -33,11 +34,11 @@ class NewsMapper {
         id = launchDto.id
     )
 
-    private fun createLinksRoom(linksDto: LinksDto?): LinksRoom = LinksRoom(
-        flickr = createFlickrRoom(linksDto?.flickr)
+    private fun createLinksEntity(linksDto: LinksDto?): LinksEntity = LinksEntity(
+        flickr = createFlickrEntity(linksDto?.flickr)
     )
 
-    private fun createFlickrRoom(flickrDto: FlickrDto?): FlickrRoom = FlickrRoom(
+    private fun createFlickrEntity(flickrDto: FlickrDto?): FlickrEntity = FlickrEntity(
         original = flickrDto?.original?.firstOrNull()
     )
 }
