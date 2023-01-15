@@ -9,7 +9,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/tv_title"
+        android:id="@+id/launchTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/padding_size"
@@ -20,15 +20,16 @@
         tools:text="title" />
 
     <TextView
-        android:id="@+id/tv_date"
+        android:id="@+id/launchDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/tv_title"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title"
+        app:layout_constraintStart_toStartOf="@+id/launchTitle"
+        app:layout_constraintTop_toBottomOf="@+id/launchTitle"
         tools:text="date" />
 
     <ImageView
+        android:id="@+id/favoriteImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/padding_size"

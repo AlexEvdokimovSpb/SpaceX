@@ -2,51 +2,41 @@ package evdokimov.spacex.news.presentation.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import evdokimov.spacex.base.BaseAdapter
+import evdokimov.spacex.base.BaseViewHolder
 import evdokimov.spacex.databinding.ItemNewsBinding
+import evdokimov.spacex.news.domain.entity.Launch
 
-class NewsAdapter(val presenter: INewsListPresenter) :
-    RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
+class NewsAdapter : BaseAdapter<Launch>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-        ViewHolder(
-            ItemNewsBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        ).apply {
-            itemView.setOnClickListener { presenter.itemClickListener?.invoke(this) }
-        }
+    var onClickListener: ((Launch) -> Unit)? = null
 
-    override fun getItemCount(): Int {
-        val count = presenter.getCount()
-        return count
+    override val areItemsTheSameCallback: (Launch, Launch) -> Boolean = { first, second ->
+        first == second
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) =
-        presenter.bindView(holder.apply {
-            pos = position
-        })
-
-    inner class ViewHolder(val vb: ItemNewsBinding) : RecyclerView.ViewHolder(vb.root), INewsItemView {
-        override var pos = -1
-        override fun setTitle(text: String) = with(vb) {
-            tvTitle.text = text
-        }
-
-        override fun setDate(date: String) {
-            vb.tvDate.text = date
-        }
+    override val areContentsTheSameCallback: (Launch, Launch) -> Boolean = { first, second ->
+        first == second
     }
 
-    fun sortAscendingDate() {
-        presenter.sortAscendingDateLoadedLaunches()
-        notifyDataSetChanged()
-    }
+    override fun onCreateViewHolder(
+        parent: ViewGroup, viewType: Int
+    ): BaseViewHolder<ItemNewsBinding, Launch> =
+        LayoutInflater.from(parent.context).let { inflater -> ItemNewsBinding.inflate(inflater, parent, false) }
+            .let { binding -> ViewHolder(binding, onClickListener) }
 
-    fun sortDescendingDate() {
-        presenter.sortDescendingDateLoadedLaunches()
-        notifyDataSetChanged()
+    class ViewHolder(
+        binding: ItemNewsBinding, private val onClickListener: ((Launch) -> Unit)?
+    ) : BaseViewHolder<ItemNewsBinding, Launch>(binding) {
+
+        override fun bind(item: Launch, position: Int) = with(binding) {
+
+            launchTitle.text = item.name
+            launchDate.text = item.dateUtc
+
+            root.setOnClickListener {
+                onClickListener?.invoke(item)
+            }
+        }
     }
 }

@@ -5,14 +5,12 @@ import evdokimov.spacex.base.BaseMvpPresenter
 import evdokimov.spacex.navigation.IScreens
 import evdokimov.spacex.news.domain.NewsInteractor
 import evdokimov.spacex.news.domain.entity.Launch
-import evdokimov.spacex.news.presentation.list.INewsItemView
-import evdokimov.spacex.news.presentation.list.INewsListPresenter
+import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
 import javax.inject.Named
-
-private const val NUMBER_CHAR_TO_DELETE = 14
 
 class NewsPresenter : BaseMvpPresenter<NewsView>() {
 
@@ -29,68 +27,37 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
     @Inject
     lateinit var newsInteractor: NewsInteractor
 
-    class NewsListPresenter : INewsListPresenter {
-
-        var launches = mutableListOf<Launch>()
-        override var itemClickListener: ((INewsItemView) -> Unit)? = null
-
-        override fun bindView(view: INewsItemView) {
-            val launch = launches[view.pos]
-            launch.dateUtc?.let {
-                view.setDate(it.dropLast(NUMBER_CHAR_TO_DELETE).replace('-', ' '))
-            }
-            launch.name?.let { view.setTitle(it) }
-        }
-
-        override fun getCount() = launches.size
-
-        override fun sortAscendingDateLoadedLaunches() {
-            val sortedLaunches = launches.sortedWith(Comparator { launch1, launch2 ->
-                launch1.dateUtc?.dropLast(14)?.replace('-', '0')?.toInt()?.let {
-                    launch2.dateUtc?.dropLast(14)?.replace('-', '0')?.toInt()?.minus(it)
-                } ?: 0
-            }) as MutableList<Launch>
-            launches = sortedLaunches
-        }
-
-        override fun sortDescendingDateLoadedLaunches() {
-            val sortedLaunches = launches.sortedWith(Comparator { launch1, launch2 ->
-                launch2.dateUtc?.dropLast(14)?.replace('-', '0')?.toInt()?.let {
-                    launch1.dateUtc?.dropLast(14)?.replace('-', '0')?.toInt()?.minus(it)
-                } ?: 0
-            }) as MutableList<Launch>
-            launches = sortedLaunches
-        }
-    }
-
-    val launchesListPresenter = NewsListPresenter()
+    private val newsSelectSubject = PublishSubject.create<Launch>()
+    private val actionUpdateSubject = PublishSubject.create<Unit>()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
-        newsInteractor.fetchAuthorisedLaunches().subscribeOn(Schedulers.io())
-            .observeOn(uiScheduler) //            .subscribeOn(schedulers.computation)
-            .subscribe({
-                viewState.init()
-                loadData()
+        newsInteractor.fetchAuthorisedLaunches().subscribeOn(Schedulers.io()).observeOn(uiScheduler)
+            .subscribe({/* no-op */
+                update()
             }, {
-                println("Error: ${it.message}")
+                println("Error fetchAuthorisedLaunches: ${it.message}")
             }).autoDisposable()
 
-        launchesListPresenter.itemClickListener = { view ->
-            val launch = launchesListPresenter.launches[view.pos]
-            router.navigateTo(screens.launch(launch))
-        }
+        actionUpdateSubject.toFlowable(BackpressureStrategy.LATEST).flatMapSingle {
+            newsInteractor.getAuthorisedLaunches()
+        }.subscribeOn(Schedulers.computation()).observeOn(uiScheduler).subscribe(viewState::updateView) {
+            println("Error getAuthorisedLaunches: ${it.message}")
+        }.autoDisposable()
+
+        newsSelectSubject.toFlowable(BackpressureStrategy.LATEST).subscribeOn(Schedulers.computation())
+            .observeOn(uiScheduler).subscribe(::newsSelect) {
+                println("Error newsSelect: ${it.message}")
+            }.autoDisposable()
     }
 
-    fun loadData() {
-        newsInteractor.getAuthorisedLaunches().subscribeOn(Schedulers.io()).observeOn(uiScheduler).subscribe({ repos ->
-            launchesListPresenter.launches.clear()
-            launchesListPresenter.launches.addAll(repos)
-            viewState.updateList()
-        }, {
-            println("Error: ${it.message}")
-        })
+    fun onNewsSelect(launch: Launch) = newsSelectSubject.onNext(launch)
+
+    fun update() = actionUpdateSubject.onNext(Unit)
+
+    private fun newsSelect(launch: Launch) {
+        router.navigateTo(screens.launch(launch))
     }
 
     fun backClick(): Boolean {

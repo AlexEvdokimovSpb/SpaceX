@@ -17,34 +17,35 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_name"
+                android:id="@+id/launchName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/title"
                 android:textSize="@dimen/title_size" />
 
             <ImageView
-                android:id="@+id/iv_image"
+                android:id="@+id/launchImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/image"
                 tools:src="@color/black" />
 
             <TextView
-                android:id="@+id/tv_date"
+                android:id="@+id/launchDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/date"
                 android:textSize="@dimen/title_size" />
 
             <TextView
-                android:id="@+id/tv_details"
+                android:id="@+id/launchDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/explanation"
                 android:textSize="@dimen/explanation_size" />
 
             <ImageView
+                android:id="@+id/favoriteImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/favorite"

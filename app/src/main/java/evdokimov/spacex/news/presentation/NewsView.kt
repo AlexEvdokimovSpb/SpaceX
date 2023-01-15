@@ -1,11 +1,11 @@
 package evdokimov.spacex.news.presentation
 
 import evdokimov.spacex.base.BaseMvpView
+import evdokimov.spacex.news.domain.entity.Launch
 import moxy.viewstate.strategy.alias.AddToEndSingle
 
 @AddToEndSingle
 interface NewsView : BaseMvpView {
 
-    fun init()
-    fun updateList()
+    fun updateView(launches: List<Launch>)
 }

@@ -12,17 +12,6 @@ import moxy.ktx.moxyPresenter
 class DetailsFragment : BasicFragment<FragmentDetailsBinding>(FragmentDetailsBinding::inflate), DetailsView,
     BackClickListener {
 
-    private val presenter: DetailsPresenter by moxyPresenter {
-        val launch = arguments?.getParcelable<Launch>(LAUNCH_ARG) as Launch
-        DetailsPresenter(launch).apply {
-            App.instance.appComponent.inject(this)
-        }
-    }
-
-    val imageLoader = ImageLoader()
-
-    override fun backPressed() = presenter.backClick()
-
     companion object {
 
         private const val LAUNCH_ARG = "launch"
@@ -34,19 +23,31 @@ class DetailsFragment : BasicFragment<FragmentDetailsBinding>(FragmentDetailsBin
         }
     }
 
+    private val presenter: DetailsPresenter by moxyPresenter {
+        val launch = arguments?.getParcelable<Launch>(LAUNCH_ARG) as Launch
+        DetailsPresenter(launch).apply {
+            App.instance.appComponent.inject(this)
+        }
+    }
+
+    val imageLoader = ImageLoader()
+
+    override fun backPressed() = presenter.backClick()
+
+
     override fun setName(name: String) {
-        binding.tvName.text = name
+        binding.launchName.text = name
     }
 
     override fun loadImage(url: String) {
-        binding.ivImage.let { imageLoader.load(url, it) }
+        binding.launchImage.let { imageLoader.load(url, it) }
     }
 
     override fun setDate(date: String) {
-        binding.tvDate.text = date
+        binding.launchDate.text = date
     }
 
     override fun setDetails(details: String) {
-        binding.tvDetails.text = details
+        binding.launchDetails.text = details
     }
 }
