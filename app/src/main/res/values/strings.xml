@@ -11,4 +11,9 @@
 
     <string name="new_dates_first">new dates first</string>
     <string name="old_dates_first">old dates first</string>
+
+    <string name="name">name</string>
+    <string name="email">email</string>
+    <string name="phone">phone</string>
+
 </resources>

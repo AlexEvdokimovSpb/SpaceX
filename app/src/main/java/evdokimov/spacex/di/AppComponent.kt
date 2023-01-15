@@ -6,11 +6,20 @@ import evdokimov.spacex.MainPresenter
 import evdokimov.spacex.details.presentation.DetailsPresenter
 import evdokimov.spacex.di.module.*
 import evdokimov.spacex.news.presentation.NewsPresenter
+import evdokimov.spacex.user.presentation.UserPresenter
 import javax.inject.Singleton
 
 @Singleton
 @Component(
-    modules = [AppModule::class, CiceroneModule::class, ApiModule::class, NewsModule::class, DataBaseModule::class, UserModule::class]
+    modules = [
+        AppModule::class,
+        CiceroneModule::class,
+        ApiModule::class,
+        NewsModule::class,
+        DataBaseModule::class,
+        UserModule::class,
+        FavoritesModule::class
+    ]
 )
 
 interface AppComponent {
@@ -19,4 +28,5 @@ interface AppComponent {
     fun inject(mainPresenter: MainPresenter)
     fun inject(newsPresenter: NewsPresenter)
     fun inject(detailsPresenter: DetailsPresenter)
+    fun inject(userPresenter: UserPresenter)
 }
