@@ -5,7 +5,7 @@ import android.app.Application
 import evdokimov.spacex.di.AppComponent
 import evdokimov.spacex.di.DaggerAppComponent
 import evdokimov.spacex.di.module.AppModule
-import evdokimov.spacex.mvp.model.room.Database
+import evdokimov.spacex.room.Database
 
 class App : Application()  {
 

@@ -1,26 +1,22 @@
 package evdokimov.spacex.di
 
 import dagger.Component
+import evdokimov.spacex.details.presentation.DetailsPresenter
 import evdokimov.spacex.di.module.*
-import evdokimov.spacex.mvp.presenter.MainPresenter
-import evdokimov.spacex.mvp.presenter.StartPresenter
-import evdokimov.spacex.mvp.presenter.ViewPresenter
-import evdokimov.spacex.ui.MainActivity
+import evdokimov.spacex.main.MainActivity
+import evdokimov.spacex.main.MainPresenter
+import evdokimov.spacex.news.presentation.NewsPresenter
 import javax.inject.Singleton
 
 @Singleton
 @Component(
-    modules = [
-        AppModule::class,
-        CiceroneModule::class,
-        ApiModule::class,
-        RepoModule::class,
-        CacheModule::class
-    ]
+    modules = [AppModule::class, CiceroneModule::class, ApiModule::class, NewsModule::class, DataBaseModule::class]
 )
+
 interface AppComponent {
+
     fun inject(mainActivity: MainActivity)
     fun inject(mainPresenter: MainPresenter)
-    fun inject(startPresenter: StartPresenter)
-    fun inject(viewPresenter: ViewPresenter)
+    fun inject(newsPresenter: NewsPresenter)
+    fun inject(detailsPresenter: DetailsPresenter)
 }

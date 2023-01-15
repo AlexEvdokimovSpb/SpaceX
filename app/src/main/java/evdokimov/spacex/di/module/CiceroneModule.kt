@@ -1,12 +1,10 @@
 package evdokimov.spacex.di.module
 
-import com.github.terrakok.cicerone.Cicerone
-import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.*
 import dagger.Module
 import dagger.Provides
-import evdokimov.spacex.mvp.navigation.IScreens
-import evdokimov.spacex.ui.AndroidScreens
+import evdokimov.spacex.navigation.IScreens
+import evdokimov.spacex.navigation.Screens
 import javax.inject.Singleton
 
 @Module
@@ -22,6 +20,5 @@ class CiceroneModule {
 
     @Singleton
     @Provides
-    fun screens(): IScreens = AndroidScreens()
-
+    fun screens(): IScreens = Screens()
 }
