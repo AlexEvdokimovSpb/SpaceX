@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">SpaceX</string>
+
     <string name="title" translatable="false">title</string>
     <string name="explanation" translatable="false">explanation</string>
     <string name="image" translatable="false">image</string>
     <string name="date" translatable="false">date</string>
     <string name="menu_sort" translatable="false">sort</string>
+    <string name="profile" translatable="false">profile</string>
+    <string name="favorite" translatable="false">favorite</string>
+
     <string name="new_dates_first">new dates first</string>
     <string name="old_dates_first">old dates first</string>
 </resources>

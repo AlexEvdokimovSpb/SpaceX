@@ -3,14 +3,14 @@ package evdokimov.spacex.news.presentation.list
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import evdokimov.spacex.databinding.ItemBinding
+import evdokimov.spacex.databinding.ItemNewsBinding
 
 class NewsAdapter(val presenter: INewsListPresenter) :
     RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(
-            ItemBinding.inflate(
+            ItemNewsBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -29,7 +29,7 @@ class NewsAdapter(val presenter: INewsListPresenter) :
             pos = position
         })
 
-    inner class ViewHolder(val vb: ItemBinding) : RecyclerView.ViewHolder(vb.root), INewsItemView {
+    inner class ViewHolder(val vb: ItemNewsBinding) : RecyclerView.ViewHolder(vb.root), INewsItemView {
         override var pos = -1
         override fun setTitle(text: String) = with(vb) {
             tvTitle.text = text

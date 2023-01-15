@@ -13,6 +13,7 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/padding_size"
             android:orientation="vertical">
 
             <TextView
@@ -42,6 +43,12 @@
                 android:layout_height="wrap_content"
                 android:text="@string/explanation"
                 android:textSize="@dimen/explanation_size" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/favorite"
+                android:src="@drawable/ic_baseline_favorite_border_24" />
 
         </LinearLayout>
     </ScrollView>
