@@ -7,4 +7,6 @@ interface IScreens {
 
     fun launches(): Screen
     fun launch(launch: Launch): Screen
+    fun authorisation(): Screen
+    fun profile(): Screen
 }

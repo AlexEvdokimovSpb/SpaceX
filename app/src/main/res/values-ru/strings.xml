@@ -8,4 +8,7 @@
     <string name="name">имя</string>
     <string name="email">электронная почта</string>
     <string name="phone">телефон</string>
+    <string name="confirmation">подтвердить</string>
+    <string name="login">логин</string>
+    <string name="password">пароль</string>
 </resources>

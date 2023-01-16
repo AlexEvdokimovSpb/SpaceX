@@ -3,6 +3,7 @@ package evdokimov.spacex.di.module
 import dagger.Module
 import dagger.Provides
 import evdokimov.spacex.user.data.api.UserApi
+import evdokimov.spacex.user.data.api.UserMockServer
 import evdokimov.spacex.user.data.datasourse.local.UserLocalDataSourceApi
 import evdokimov.spacex.user.data.datasourse.remote.UserRemoteDataSource
 import evdokimov.spacex.user.data.datasourse.remote.UserRemoteDataSourceApi
@@ -30,6 +31,10 @@ class UserModule {
     @Singleton
     @Provides
     fun userRemoteData(userApi: UserApi): UserRemoteDataSourceApi = UserRemoteDataSource(userApi)
+
+    @Provides
+    @Singleton
+    fun newsApi(): UserApi = UserMockServer()
 
     @Singleton
     @Provides

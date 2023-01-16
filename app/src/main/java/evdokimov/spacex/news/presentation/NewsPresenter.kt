@@ -29,6 +29,7 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
 
     private val newsSelectSubject = PublishSubject.create<Launch>()
     private val actionUpdateSubject = PublishSubject.create<Unit>()
+    private val actionMenuUserClickSubject = PublishSubject.create<Unit>()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -50,6 +51,11 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
             .observeOn(uiScheduler).subscribe(::newsSelect) {
                 println("Error newsSelect: ${it.message}")
             }.autoDisposable()
+
+        actionMenuUserClickSubject.toFlowable(BackpressureStrategy.LATEST).subscribeOn(Schedulers.computation())
+            .observeOn(uiScheduler).subscribe({ menuUserSelect() }, {
+                println("Error newsSelect: ${it.message}")
+            }).autoDisposable()
     }
 
     fun onNewsSelect(launch: Launch) = newsSelectSubject.onNext(launch)
@@ -58,6 +64,12 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
 
     private fun newsSelect(launch: Launch) {
         router.navigateTo(screens.launch(launch))
+    }
+
+    fun menuUserClick() = actionMenuUserClickSubject.onNext(Unit)
+
+    private fun menuUserSelect(){
+        router.navigateTo(screens.authorisation())
     }
 
     fun backClick(): Boolean {

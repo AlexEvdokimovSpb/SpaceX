@@ -59,6 +59,20 @@ class NewsFragment : BasicFragment<FragmentNewsBinding>(FragmentNewsBinding::inf
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_sort -> {
+                showMessage("сортировка")
+                return true
+            }
+            R.id.menu_profile -> {
+                presenter.menuUserClick()
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun updateView(launches: List<Launch>) = newsAdapter.setData(launches)
 
     override fun backPressed() = presenter.backClick()

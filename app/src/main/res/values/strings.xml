@@ -15,5 +15,8 @@
     <string name="name">name</string>
     <string name="email">email</string>
     <string name="phone">phone</string>
+    <string name="confirmation">confirmation</string>
+    <string name="login">login</string>
+    <string name="password">password</string>
 
 </resources>
