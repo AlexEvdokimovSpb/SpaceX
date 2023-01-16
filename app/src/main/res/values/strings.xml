@@ -18,5 +18,6 @@
     <string name="confirmation">confirmation</string>
     <string name="login">login</string>
     <string name="password">password</string>
+    <string name="log_out">log out</string>
 
 </resources>

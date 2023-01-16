@@ -1,5 +1,7 @@
 package evdokimov.spacex.user.presentation
 
+import android.os.Bundle
+import android.view.View
 import evdokimov.spacex.App
 import evdokimov.spacex.BackClickListener
 import evdokimov.spacex.base.BasicFragment
@@ -16,6 +18,14 @@ class UserFragment : BasicFragment<FragmentUserBinding>(FragmentUserBinding::inf
     private val presenter: UserPresenter by moxyPresenter {
         UserPresenter().apply {
             App.instance.appComponent.inject(this)
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.logOut.setOnClickListener {
+            presenter.logOutClick()
         }
     }
 

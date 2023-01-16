@@ -4,6 +4,8 @@ import com.google.gson.*
 import dagger.Module
 import dagger.Provides
 import evdokimov.spacex.news.data.api.NewsApi
+import evdokimov.spacex.user.data.api.UserApi
+import evdokimov.spacex.user.data.api.UserMockServer
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,9 +21,13 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun api(@Named("baseUrl") baseUrl: String, gson: Gson): NewsApi =
+    fun newsApi(@Named("baseUrl") baseUrl: String, gson: Gson): NewsApi =
         Retrofit.Builder().baseUrl(baseUrl).addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson)).build().create(NewsApi::class.java)
+
+    @Provides
+    @Singleton
+    fun userApi(): UserApi = UserMockServer()
 
     @Provides
     @Singleton

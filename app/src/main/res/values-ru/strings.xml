@@ -11,4 +11,5 @@
     <string name="confirmation">подтвердить</string>
     <string name="login">логин</string>
     <string name="password">пароль</string>
+    <string name="log_out">выйти из профиля</string>
 </resources>
