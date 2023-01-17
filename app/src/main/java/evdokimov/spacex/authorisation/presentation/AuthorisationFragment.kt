@@ -2,6 +2,7 @@ package evdokimov.spacex.authorisation.presentation
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.widget.doAfterTextChanged
 import evdokimov.spacex.App
 import evdokimov.spacex.BackClickListener
 import evdokimov.spacex.base.BasicFragment
@@ -24,8 +25,13 @@ class AuthorisationFragment : BasicFragment<FragmentAuthorisationBinding>(Fragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.confirmation.setOnClickListener{
+        binding.login.doAfterTextChanged { login ->
+            presenter.loginChanged(login.toString())
+        }
+        binding.password.doAfterTextChanged { password ->
+            presenter.passwordChanged(password.toString())
+        }
+        binding.confirmation.setOnClickListener {
             presenter.confirmationClick()
         }
     }
