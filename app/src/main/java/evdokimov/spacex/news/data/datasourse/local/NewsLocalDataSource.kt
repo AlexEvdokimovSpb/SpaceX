@@ -16,6 +16,8 @@ class NewsLocalDataSource(
     override fun getLaunches(): Flowable<List<LaunchEntity>> = newsDao.getAll()
             .subscribeOn(Schedulers.computation())
 
+    override fun getLaunchById(id: String): Flowable<LaunchEntity> = newsDao.get(id)
+
     override fun clear(): Completable = newsDao.clear()
 }
 

@@ -10,5 +10,7 @@ interface NewsLocalDataSourceApi {
 
     fun getLaunches(): Flowable<List<LaunchEntity>>
 
+    fun getLaunchById(id: String): Flowable<LaunchEntity>
+
     fun clear(): Completable
 }

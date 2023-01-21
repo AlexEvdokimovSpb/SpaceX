@@ -93,7 +93,6 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
                         })
                 .autoDisposable()
 
-
         actionOnFavoriteIconClickSubject.toFlowable(BackpressureStrategy.LATEST)
                 .withLatestFrom(isUserExists)
                 .subscribeOn(Schedulers.computation())
@@ -114,7 +113,7 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
         actionUpdateSubject.toFlowable(BackpressureStrategy.LATEST)
                 .combineLatest(favoritesFlowable)
                 .flatMap { (_, favorites) ->
-                    newsInteractor.getAuthorisedLaunches(favorites)
+                    newsInteractor.getLaunches(favorites)
                 }
                 .subscribeOn(Schedulers.computation())
                 .observeOn(uiScheduler)
@@ -153,7 +152,7 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
     fun update() = actionUpdateSubject.onNext(Unit)
 
     private fun newsSelected(launch: Launch) {
-        router.navigateTo(screens.launch(launch))
+        router.navigateTo(screens.launch(launch.id))
     }
 
     fun onFavoriteIconClick(launch: Launch) = actionOnFavoriteIconClickSubject.onNext(launch)

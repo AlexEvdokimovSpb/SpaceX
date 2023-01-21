@@ -33,7 +33,7 @@ class NewsRepository(
                 newsLocalDataSource.putLaunches(launchEntities)
             }
 
-    override fun getAuthorisedLaunches(favoriteLaunches: List<FavoriteLaunch>): Flowable<List<Launch>> =
+    override fun getLaunches(favoriteLaunches: List<FavoriteLaunch>): Flowable<List<Launch>> =
             newsLocalDataSource.getLaunches()
                     .map { launchEntities ->
                         launchEntities.map { launchEntity ->
@@ -44,8 +44,16 @@ class NewsRepository(
                         }
                     }
 
-    override fun getUnauthorisedLaunches(): Flowable<List<Launch>> = newsLocalDataSource.getLaunches()
-            .map { launchEntities -> launchEntities.map { launchEntity -> newsMapper.createLaunch(launchEntity) } }
+    override fun getLaunchById(
+            id: String,
+            isFavorite: Boolean
+    ): Flowable<Launch> = newsLocalDataSource.getLaunchById(id)
+            .map { launchEntity ->
+                newsMapper.createLaunch(
+                        launchEntity,
+                        isFavorite
+                )
+            }
 
     override fun clear(): Completable = newsLocalDataSource.clear()
 }

@@ -11,9 +11,12 @@ interface NewsRepositoryApi {
 
     fun fetchUnauthorisedLaunches(): Completable
 
-    fun getAuthorisedLaunches(favoriteLaunches: List<FavoriteLaunch>): Flowable<List<Launch>>
+    fun getLaunches(favoriteLaunches: List<FavoriteLaunch>): Flowable<List<Launch>>
 
-    fun getUnauthorisedLaunches(): Flowable<List<Launch>>
+    fun getLaunchById(
+            id: String,
+            isFavorite: Boolean
+    ): Flowable<Launch>
 
     fun clear(): Completable
 }

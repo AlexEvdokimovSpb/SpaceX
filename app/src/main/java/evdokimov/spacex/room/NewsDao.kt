@@ -37,6 +37,9 @@ interface NewsDao {
     @Query("SELECT * FROM Launch")
     fun getAll(): Flowable<List<LaunchEntity>>
 
+    @Query("SELECT * FROM Launch WHERE id LIKE :id LIMIT 1")
+    fun get(id: String): Flowable<LaunchEntity>
+
     @Query("DELETE FROM Launch")
     fun clear(): Completable
 }
