@@ -38,9 +38,13 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
     @Inject
     lateinit var favoritesInteractor: FavoritesInteractor
 
+    private val startAuthorisedScreenSubject = PublishSubject.create<Unit>()
+    private val startUnauthorisedScreenSubject = PublishSubject.create<Unit>()
+
     private val newsSelectSubject = PublishSubject.create<Launch>()
     private val actionUpdateSubject = PublishSubject.create<Unit>()
     private val actionMenuUserClickSubject = PublishSubject.create<Unit>()
+
     private val actionOnFavoriteIconClickSubject = PublishSubject.create<Launch>()
     private val addToFavoriteSubject = BehaviorSubject.create<Launch>()
 
@@ -51,6 +55,44 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
 
         val favoritesFlowable = favoritesInteractor.getAll()
                 .toBehaviorFlowable()
+
+        isUserExists.subscribeOn(Schedulers.io())
+                .observeOn(uiScheduler)
+                .subscribe(::startScreen) {
+                    println("Error isUserExists: ${it.message}")
+                }
+                .autoDisposable()
+
+        startAuthorisedScreenSubject.toFlowable(BackpressureStrategy.LATEST)
+                .flatMapSingle {
+                    newsInteractor.fetchAuthorisedLaunches()
+                            .andThen(Single.just(Unit))
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(uiScheduler)
+                .subscribe({/* no-op */
+                    update()
+                },
+                        {
+                            println("Error fetchAuthorisedLaunches: ${it.message}")
+                        })
+                .autoDisposable()
+
+        startUnauthorisedScreenSubject.toFlowable(BackpressureStrategy.LATEST)
+                .flatMapSingle {
+                    newsInteractor.fetchUnauthorisedLaunches()
+                            .andThen(Single.just(Unit))
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(uiScheduler)
+                .subscribe({/* no-op */
+                    update()
+                },
+                        {
+                            println("Error fetchAuthorisedLaunches: ${it.message}")
+                        })
+                .autoDisposable()
+
 
         actionOnFavoriteIconClickSubject.toFlowable(BackpressureStrategy.LATEST)
                 .withLatestFrom(isUserExists)
@@ -67,18 +109,6 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
                 .observeOn(uiScheduler)
                 .subscribe({/* no-op */ },
                         { println("Error addToFavoriteSubject: ${it.message}") })
-                .autoDisposable()
-
-        newsInteractor.fetchAuthorisedLaunches()
-                .subscribeOn(Schedulers.io())
-                .observeOn(uiScheduler)
-                .subscribe(
-                        {/* no-op */
-                            update()
-                        },
-                        {
-                            println("Error fetchAuthorisedLaunches: ${it.message}")
-                        })
                 .autoDisposable()
 
         actionUpdateSubject.toFlowable(BackpressureStrategy.LATEST)
@@ -110,6 +140,12 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
                     println("Error menuUserSelect: ${it.message}")
                 }
                 .autoDisposable()
+    }
+
+    private fun startScreen(isAuthorized: Boolean) = if (isAuthorized) {
+        startAuthorisedScreenSubject.onNext(Unit)
+    } else {
+        startUnauthorisedScreenSubject.onNext(Unit)
     }
 
     fun onNewsSelect(launch: Launch) = newsSelectSubject.onNext(launch)

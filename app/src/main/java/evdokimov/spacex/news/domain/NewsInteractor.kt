@@ -13,6 +13,8 @@ class NewsInteractor(
 
     fun fetchAuthorisedLaunches(): Completable = newsRepository.fetchAuthorisedLaunches()
 
+    fun fetchUnauthorisedLaunches(): Completable = newsRepository.fetchUnauthorisedLaunches()
+
     fun getAuthorisedLaunches(favoriteLaunches: List<FavoriteLaunch>): Flowable<List<Launch>> =
             newsRepository.getAuthorisedLaunches(favoriteLaunches)
                     .map { launches -> newsFunctions.filteringLoadedLaunches(launches) }

@@ -38,6 +38,16 @@ class NewsMapper {
             id = launchDto.id
     )
 
+    fun createLaunchEntity(launchDto: ShortLaunchDto): LaunchEntity = LaunchEntity(
+            links = createLinksEntity(launchDto.links),
+            success = null,
+            details = null,
+            flightNumber = launchDto.flightNumber,
+            name = launchDto.name,
+            dateUtc = null,
+            id = launchDto.id
+    )
+
     private fun createLinksEntity(linksDto: LinksDto?): LinksEntity = LinksEntity(
             flickr = createFlickrEntity(linksDto?.flickr)
     )

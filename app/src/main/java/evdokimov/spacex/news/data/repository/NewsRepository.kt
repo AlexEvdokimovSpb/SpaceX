@@ -14,13 +14,23 @@ class NewsRepository(
 ) : NewsRepositoryApi {
 
     override fun fetchAuthorisedLaunches(): Completable = newsRemoteDataSource.fetchAuthorisedLaunches()
+            .map { launchEntity ->
+                launchEntity.map { launchDto ->
+                    newsMapper.createLaunchEntity(launchDto)
+                }
+            }
+            .flatMapCompletable { launchEntities ->
+                newsLocalDataSource.putLaunches(launchEntities)
+            }
+
+    override fun fetchUnauthorisedLaunches(): Completable = newsRemoteDataSource.fetchUnauthorisedLaunches()
             .map { launchDtos ->
                 launchDtos.map { launchDto ->
                     newsMapper.createLaunchEntity(launchDto)
                 }
             }
-            .flatMapCompletable { launchRoom ->
-                newsLocalDataSource.putLaunches(launchRoom)
+            .flatMapCompletable { launchEntities ->
+                newsLocalDataSource.putLaunches(launchEntities)
             }
 
     override fun getAuthorisedLaunches(favoriteLaunches: List<FavoriteLaunch>): Flowable<List<Launch>> =
