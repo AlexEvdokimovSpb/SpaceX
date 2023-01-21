@@ -10,6 +10,7 @@ import evdokimov.spacex.rx.toBehaviorFlowable
 import evdokimov.spacex.rx.withLatestFrom
 import evdokimov.spacex.user.domain.UserInteractor
 import io.reactivex.rxjava3.core.*
+import io.reactivex.rxjava3.kotlin.combineLatest
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -47,6 +48,9 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
         super.onFirstViewAttach()
 
         val isUserExists = userInteractor.isUserExists.toBehaviorFlowable()
+
+        val favoritesFlowable = favoritesInteractor.getAll()
+                .toBehaviorFlowable()
 
         isUserExists.subscribeOn(Schedulers.computation())
                 .observeOn(uiScheduler)
@@ -91,8 +95,9 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
                 .autoDisposable()
 
         actionUpdateSubject.toFlowable(BackpressureStrategy.LATEST)
-                .flatMapSingle {
-                    newsInteractor.getAuthorisedLaunches()
+                .combineLatest(favoritesFlowable)
+                .flatMapSingle { (_, favorites) ->
+                    newsInteractor.getAuthorisedLaunches(favorites)
                 }
                 .subscribeOn(Schedulers.computation())
                 .observeOn(uiScheduler)

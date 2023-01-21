@@ -6,7 +6,10 @@ import evdokimov.spacex.room.entity.*
 
 class NewsMapper {
 
-    fun createLaunch(launchEntity: LaunchEntity): Launch = Launch(
+    fun createLaunch(
+            launchEntity: LaunchEntity,
+            isFavorite: Boolean = false
+    ): Launch = Launch(
             links = createLinks(launchEntity.links),
             success = launchEntity.success,
             details = launchEntity.details,
@@ -14,7 +17,7 @@ class NewsMapper {
             name = launchEntity.name,
             dateUtc = launchEntity.dateUtc,
             id = launchEntity.id,
-            isFavorite = false
+            isFavorite = isFavorite
     )
 
     private fun createLinks(linksEntity: LinksEntity?): Links = Links(
