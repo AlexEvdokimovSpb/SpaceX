@@ -2,7 +2,9 @@ package evdokimov.spacex.user.presentation
 
 import com.github.terrakok.cicerone.Router
 import evdokimov.spacex.base.BaseMvpPresenter
+import evdokimov.spacex.favorites.domain.FavoritesInteractor
 import evdokimov.spacex.navigation.IScreens
+import evdokimov.spacex.news.domain.NewsInteractor
 import evdokimov.spacex.user.domain.UserInteractor
 import io.reactivex.rxjava3.core.*
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -23,7 +25,13 @@ class UserPresenter() : BaseMvpPresenter<UserView>() {
     lateinit var screens: IScreens
 
     @Inject
+    lateinit var newsInteractor: NewsInteractor
+
+    @Inject
     lateinit var userInteractor: UserInteractor
+
+    @Inject
+    lateinit var favoritesInteractor: FavoritesInteractor
 
     private val logOutClickSubject = PublishSubject.create<Unit>()
 
@@ -42,6 +50,8 @@ class UserPresenter() : BaseMvpPresenter<UserView>() {
         logOutClickSubject.toFlowable(BackpressureStrategy.LATEST)
                 .flatMapSingle {
                     userInteractor.deleteUser()
+                            .andThen(favoritesInteractor.clear())
+                            .andThen(newsInteractor.clear())
                             .andThen(Single.just(Unit))
                 }
                 .subscribeOn(Schedulers.computation())

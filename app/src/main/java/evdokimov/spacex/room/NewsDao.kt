@@ -2,8 +2,7 @@ package evdokimov.spacex.room
 
 import androidx.room.*
 import evdokimov.spacex.room.entity.LaunchEntity
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.core.*
 
 @Dao
 interface NewsDao {
@@ -36,5 +35,8 @@ interface NewsDao {
     fun delete(launches: List<LaunchEntity>): Completable
 
     @Query("SELECT * FROM Launch")
-    fun getAll(): Single<List<LaunchEntity>>
+    fun getAll(): Flowable<List<LaunchEntity>>
+
+    @Query("DELETE FROM Launch")
+    fun clear(): Completable
 }

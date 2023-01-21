@@ -3,10 +3,9 @@ package evdokimov.spacex.news.data.repository
 import evdokimov.spacex.favorites.domain.entity.FavoriteLaunch
 import evdokimov.spacex.news.data.datasourse.local.NewsLocalDataSourceApi
 import evdokimov.spacex.news.data.datasourse.remote.NewsRemoteDataSourceApi
-import evdokimov.spacex.news.data.entity.ShortLaunchDto
 import evdokimov.spacex.news.domain.entity.Launch
 import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.core.Flowable
 
 class NewsRepository(
         private val newsRemoteDataSource: NewsRemoteDataSourceApi,
@@ -24,7 +23,7 @@ class NewsRepository(
                 newsLocalDataSource.putLaunches(launchRoom)
             }
 
-    override fun getAuthorisedLaunches(favoriteLaunches: List<FavoriteLaunch>): Single<List<Launch>> =
+    override fun getAuthorisedLaunches(favoriteLaunches: List<FavoriteLaunch>): Flowable<List<Launch>> =
             newsLocalDataSource.getLaunches()
                     .map { launchEntities ->
                         launchEntities.map { launchEntity ->
@@ -35,9 +34,10 @@ class NewsRepository(
                         }
                     }
 
-    override fun getUnauthorisedLaunches(): Single<List<ShortLaunchDto>> {
-        return newsRemoteDataSource.fetchUnauthorisedLaunches()
-    }
+    override fun getUnauthorisedLaunches(): Flowable<List<Launch>> = newsLocalDataSource.getLaunches()
+            .map { launchEntities -> launchEntities.map { launchEntity -> newsMapper.createLaunch(launchEntity) } }
+
+    override fun clear(): Completable = newsLocalDataSource.clear()
 }
 
 

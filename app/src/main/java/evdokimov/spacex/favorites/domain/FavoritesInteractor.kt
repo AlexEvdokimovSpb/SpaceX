@@ -17,6 +17,7 @@ class FavoritesInteractor(
 
     fun clear(): Completable = favoritesRepository.clear()
 
+    // Можно ничего не возвращать
     fun onFavoriteIconClick(launch: Launch): Single<Launch> = if (launch.isFavorite) {
         delete(launch.id).andThen(Single.just(launch.copy(isFavorite = false)))
     } else {

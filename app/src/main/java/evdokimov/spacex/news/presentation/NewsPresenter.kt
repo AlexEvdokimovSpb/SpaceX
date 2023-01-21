@@ -52,16 +52,6 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
         val favoritesFlowable = favoritesInteractor.getAll()
                 .toBehaviorFlowable()
 
-        isUserExists.subscribeOn(Schedulers.computation())
-                .observeOn(uiScheduler)
-                .subscribe({
-                    viewState.showMessage("suscibe")
-                },
-                        {
-                            println("Error addToFavoriteSubject: ${it.message}")
-                        })
-                .autoDisposable()
-
         actionOnFavoriteIconClickSubject.toFlowable(BackpressureStrategy.LATEST)
                 .withLatestFrom(isUserExists)
                 .subscribeOn(Schedulers.computation())
@@ -75,12 +65,8 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
                 .flatMapSingle { launch -> favoritesInteractor.onFavoriteIconClick(launch) }
                 .subscribeOn(Schedulers.computation())
                 .observeOn(uiScheduler)
-                .subscribe({
-                    viewState.showMessage("favorit")
-                },
-                        {
-                            println("Error addToFavoriteSubject: ${it.message}")
-                        })
+                .subscribe({/* no-op */ },
+                        { println("Error addToFavoriteSubject: ${it.message}") })
                 .autoDisposable()
 
         newsInteractor.fetchAuthorisedLaunches()
@@ -96,7 +82,7 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
 
         actionUpdateSubject.toFlowable(BackpressureStrategy.LATEST)
                 .combineLatest(favoritesFlowable)
-                .flatMapSingle { (_, favorites) ->
+                .flatMap { (_, favorites) ->
                     newsInteractor.getAuthorisedLaunches(favorites)
                 }
                 .subscribeOn(Schedulers.computation())
@@ -109,7 +95,7 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
         newsSelectSubject.toFlowable(BackpressureStrategy.LATEST)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(uiScheduler)
-                .subscribe(::newsSelect) {
+                .subscribe(::newsSelected) {
                     println("Error newsSelect: ${it.message}")
                 }
                 .autoDisposable()
@@ -129,7 +115,7 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
 
     fun update() = actionUpdateSubject.onNext(Unit)
 
-    private fun newsSelect(launch: Launch) {
+    private fun newsSelected(launch: Launch) {
         router.navigateTo(screens.launch(launch))
     }
 
