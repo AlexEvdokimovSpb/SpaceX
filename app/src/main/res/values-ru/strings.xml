@@ -12,4 +12,5 @@
     <string name="login">логин</string>
     <string name="password">пароль</string>
     <string name="log_out">выйти из профиля</string>
+    <string name="log_in">войдите в профиль</string>
 </resources>

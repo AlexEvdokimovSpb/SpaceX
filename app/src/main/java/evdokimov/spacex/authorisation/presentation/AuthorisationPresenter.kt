@@ -3,12 +3,11 @@ package evdokimov.spacex.authorisation.presentation
 import com.github.terrakok.cicerone.Router
 import evdokimov.spacex.base.BaseMvpPresenter
 import evdokimov.spacex.navigation.IScreens
-import evdokimov.spacex.rx.toBehaviorFlowable
+import evdokimov.spacex.rx.withLatestFrom
 import evdokimov.spacex.user.domain.UserInteractor
 import evdokimov.spacex.user.domain.entity.User
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.BackpressureStrategy
-import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.*
 import io.reactivex.rxjava3.kotlin.combineLatest
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -16,13 +15,11 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
 
-class AuthorisationPresenter() : BaseMvpPresenter<AuthorisationView>() {
+class AuthorisationPresenter : BaseMvpPresenter<AuthorisationView>() {
 
     companion object {
 
         private const val INPUT_TEXT_DELAY = 200L
-        const val PASSWORD = "123456"
-        const val LOGIN = "login"
     }
 
     @Inject
@@ -41,31 +38,61 @@ class AuthorisationPresenter() : BaseMvpPresenter<AuthorisationView>() {
     private val loginChangedSubject = PublishSubject.create<String>()
     private val passwordChangedSubject = PublishSubject.create<String>()
     private val confirmationClickSubject = PublishSubject.create<Unit>()
+    private val saveUserSubject = PublishSubject.create<User>()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
-        val loginChangedFlowable =
-            loginChangedSubject.toFlowable(BackpressureStrategy.LATEST).observeOn(Schedulers.computation())
-                .distinctUntilChanged().debounce(INPUT_TEXT_DELAY, TimeUnit.MILLISECONDS).toBehaviorFlowable()
+        val loginChangedFlowable = loginChangedSubject.toFlowable(BackpressureStrategy.LATEST)
+                .observeOn(Schedulers.computation())
+                .distinctUntilChanged()
+                .debounce(
+                        INPUT_TEXT_DELAY,
+                        TimeUnit.MILLISECONDS
+                )
 
-        val passwordChangedFlowable =
-            passwordChangedSubject.toFlowable(BackpressureStrategy.LATEST).observeOn(Schedulers.computation())
-                .distinctUntilChanged().debounce(INPUT_TEXT_DELAY, TimeUnit.MILLISECONDS).toBehaviorFlowable()
+        val passwordChangedFlowable = passwordChangedSubject.toFlowable(BackpressureStrategy.LATEST)
+                .observeOn(Schedulers.computation())
+                .distinctUntilChanged()
+                .debounce(
+                        INPUT_TEXT_DELAY,
+                        TimeUnit.MILLISECONDS
+                )
 
         val loginAndPasswordFlowable = loginChangedFlowable.combineLatest(passwordChangedFlowable)
 
-        confirmationClickSubject.toFlowable(BackpressureStrategy.LATEST).flatMap { loginAndPasswordFlowable }
-            .flatMap { (login, password) ->
-                userInteractor.fetchUser(password, login).toFlowable()
-            }.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-                viewState.showMessage("успех") //                confirmation(it)
-            }, {
-                viewState.showMessage("ошибка")
-                println("Error confirmation: ${it.message}")
-            }, {
-                viewState.showMessage("неверный логин или пароль")
-            }).autoDisposable()
+        confirmationClickSubject.toFlowable(BackpressureStrategy.LATEST)
+                .withLatestFrom(loginAndPasswordFlowable)
+                .map { it.second }
+                .flatMapMaybe { (login, password) ->
+                    userInteractor.fetchUser(
+                            password,
+                            login
+                    )
+                }
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        ::confirmation
+                ) {
+                    println("Error confirmation: ${it.message}")
+                }
+                .autoDisposable()
+
+        saveUserSubject.toFlowable(BackpressureStrategy.LATEST)
+                .flatMapSingle {
+                    userInteractor.insertUser(it)
+                            .andThen(Single.just(Unit))
+                }
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    router.replaceScreen(screens.profile())
+                },
+                        {
+                            println("Error saveUser: ${it.message}")
+                        })
+                .autoDisposable()
     }
 
     fun loginChanged(login: String) = loginChangedSubject.onNext(login)
@@ -74,9 +101,7 @@ class AuthorisationPresenter() : BaseMvpPresenter<AuthorisationView>() {
 
     fun confirmationClick() = confirmationClickSubject.onNext(Unit)
 
-    private fun confirmation(user: User) {
-        router.navigateTo(screens.profile())
-    }
+    private fun confirmation(user: User) = saveUserSubject.onNext(user)
 
     fun backClick(): Boolean {
         router.exit()

@@ -1,18 +1,15 @@
 package evdokimov.spacex.favorites.data.local
 
 import evdokimov.spacex.room.entity.FavoriteLaunchEntity
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.core.*
 
 interface FavoritesLocalDataSourceApi {
 
-    fun getAll(): Single<List<FavoriteLaunchEntity>>
+    fun getAll(): Flowable<List<FavoriteLaunchEntity>>
 
-    fun findById(id: Int): Single<FavoriteLaunchEntity>
+    fun delete(id: String): Completable
 
-    fun deleteById(id: Int): Completable
-
-    fun insert(vararg favoriteProduct: FavoriteLaunchEntity): Completable
+    fun insert(favoriteProduct: FavoriteLaunchEntity): Completable
 
     fun clear(): Completable
 }

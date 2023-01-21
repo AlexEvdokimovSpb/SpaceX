@@ -4,8 +4,7 @@ import com.github.terrakok.cicerone.Router
 import evdokimov.spacex.base.BaseMvpPresenter
 import evdokimov.spacex.navigation.IScreens
 import evdokimov.spacex.user.domain.UserInteractor
-import io.reactivex.rxjava3.core.BackpressureStrategy
-import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.*
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
@@ -31,16 +30,33 @@ class UserPresenter() : BaseMvpPresenter<UserView>() {
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
-        logOutClickSubject.toFlowable(BackpressureStrategy.LATEST).subscribeOn(Schedulers.computation())
-            .observeOn(uiScheduler).subscribe({ logOut() }, {
-                println("Error logOut: ${it.message}")
-            }).autoDisposable()
+        userInteractor.getUser()
+                .toFlowable()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(uiScheduler)
+                .subscribe(viewState::setUser) {
+                    println("Error getUser: ${it.message}")
+                }
+                .autoDisposable()
+
+        logOutClickSubject.toFlowable(BackpressureStrategy.LATEST)
+                .flatMapSingle {
+                    userInteractor.deleteUser()
+                            .andThen(Single.just(Unit))
+                }
+                .subscribeOn(Schedulers.computation())
+                .observeOn(uiScheduler)
+                .subscribe({ logOut() },
+                        {
+                            println("Error logOut: ${it.message}")
+                        })
+                .autoDisposable()
     }
 
     fun logOutClick() = logOutClickSubject.onNext(Unit)
 
     private fun logOut() {
-        router.navigateTo(screens.launches())
+        router.exit()
     }
 
     fun backClick(): Boolean {

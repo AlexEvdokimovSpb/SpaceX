@@ -6,11 +6,16 @@ import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class UserRemoteDataSource(
-    private val userApi: UserApi
+        private val userApi: UserApi
 ) : UserRemoteDataSourceApi {
 
-    override fun fetchUser(password: String, login: String): Maybe<UserDto> = userApi.fetchUser(
-        password, login
-    ).subscribeOn(Schedulers.computation())
+    override fun fetchUser(
+            password: String,
+            login: String
+    ): Maybe<UserDto> = userApi.fetchUser(
+            password,
+            login
+    )
+            .subscribeOn(Schedulers.computation())
 }
 

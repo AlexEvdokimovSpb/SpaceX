@@ -8,4 +8,6 @@ import moxy.viewstate.strategy.alias.AddToEndSingle
 interface NewsView : BaseMvpView {
 
     fun updateView(launches: List<Launch>)
+
+    fun showNeedLogIn()
 }

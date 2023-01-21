@@ -10,7 +10,8 @@ import evdokimov.spacex.databinding.FragmentAuthorisationBinding
 import moxy.ktx.moxyPresenter
 
 class AuthorisationFragment : BasicFragment<FragmentAuthorisationBinding>(FragmentAuthorisationBinding::inflate),
-    AuthorisationView, BackClickListener {
+        AuthorisationView,
+        BackClickListener {
 
     companion object {
 
@@ -23,8 +24,14 @@ class AuthorisationFragment : BasicFragment<FragmentAuthorisationBinding>(Fragme
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(
+            view: View,
+            savedInstanceState: Bundle?
+    ) {
+        super.onViewCreated(
+                view,
+                savedInstanceState
+        )
         binding.login.doAfterTextChanged { login ->
             presenter.loginChanged(login.toString())
         }

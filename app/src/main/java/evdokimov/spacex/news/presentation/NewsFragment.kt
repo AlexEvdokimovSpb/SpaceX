@@ -47,6 +47,7 @@ class NewsFragment : BasicFragment<FragmentNewsBinding>(FragmentNewsBinding::inf
         newsAdapter = NewsAdapter()
         newsAdapter.apply {
             onClickListener = presenter::onNewsSelect
+            onFavoriteIconClick = presenter::onFavoriteIconClick
         }
         with(binding.newsList) {
             layoutManager = LinearLayoutManager(requireContext())
@@ -74,6 +75,8 @@ class NewsFragment : BasicFragment<FragmentNewsBinding>(FragmentNewsBinding::inf
     }
 
     override fun updateView(launches: List<Launch>) = newsAdapter.setData(launches)
+
+    override fun showNeedLogIn() = showMessage(R.string.log_in)
 
     override fun backPressed() = presenter.backClick()
 }

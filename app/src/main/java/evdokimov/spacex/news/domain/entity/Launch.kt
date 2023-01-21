@@ -11,5 +11,6 @@ data class Launch(
     val flightNumber: Int?,
     val name: String?,
     val dateUtc: String?,
-    val id: String
+    val id: String,
+    val isFavorite: Boolean
 ) : Parcelable

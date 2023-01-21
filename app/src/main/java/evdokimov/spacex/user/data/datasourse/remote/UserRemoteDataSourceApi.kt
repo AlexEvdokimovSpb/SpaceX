@@ -5,5 +5,8 @@ import io.reactivex.rxjava3.core.Maybe
 
 interface UserRemoteDataSourceApi {
 
-    fun fetchUser(password: String, login: String): Maybe<UserDto>
+    fun fetchUser(
+            password: String,
+            login: String
+    ): Maybe<UserDto>
 }
