@@ -72,9 +72,10 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
         newsInteractor.fetchAuthorisedLaunches()
                 .subscribeOn(Schedulers.io())
                 .observeOn(uiScheduler)
-                .subscribe({/* no-op */
-                    update()
-                },
+                .subscribe(
+                        {/* no-op */
+                            update()
+                        },
                         {
                             println("Error fetchAuthorisedLaunches: ${it.message}")
                         })
