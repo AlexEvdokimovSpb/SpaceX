@@ -1,8 +1,9 @@
 package evdokimov.spacex.details.presentation
 
+import android.os.Bundle
+import android.view.View
 import androidx.core.os.bundleOf
-import evdokimov.spacex.App
-import evdokimov.spacex.BackClickListener
+import evdokimov.spacex.*
 import evdokimov.spacex.base.BasicFragment
 import evdokimov.spacex.databinding.FragmentDetailsBinding
 import evdokimov.spacex.image.ImageLoader
@@ -32,7 +33,19 @@ class DetailsFragment : BasicFragment<FragmentDetailsBinding>(FragmentDetailsBin
 
     val imageLoader = ImageLoader()
 
-    override fun backPressed() = presenter.backClick()
+    override fun onViewCreated(
+            view: View,
+            savedInstanceState: Bundle?
+    ) {
+        super.onViewCreated(
+                view,
+                savedInstanceState
+        )
+
+        binding.favoriteImage.setOnClickListener {
+            presenter.onFavoriteIconClick()
+        }
+    }
 
     override fun setName(name: String) {
         binding.launchName.text = name
@@ -54,4 +67,16 @@ class DetailsFragment : BasicFragment<FragmentDetailsBinding>(FragmentDetailsBin
     override fun setDetails(details: String) {
         binding.launchDetails.text = details
     }
+
+    override fun setFavoriteImage(isFavorite: Boolean) {
+        if (isFavorite) {
+            binding.favoriteImage.setImageResource(R.drawable.ic_baseline_favorite_24)
+        } else {
+            binding.favoriteImage.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+        }
+    }
+
+    override fun showNeedLogIn() = showMessage(R.string.log_in)
+
+    override fun backPressed() = presenter.backClick()
 }

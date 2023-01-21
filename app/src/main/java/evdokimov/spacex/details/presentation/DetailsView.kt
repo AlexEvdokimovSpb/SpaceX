@@ -10,4 +10,6 @@ interface DetailsView : BaseMvpView {
     fun loadImage(url: String)
     fun setDate(date: String)
     fun setDetails(details: String)
+    fun setFavoriteImage(isFavorite: Boolean)
+    fun showNeedLogIn()
 }

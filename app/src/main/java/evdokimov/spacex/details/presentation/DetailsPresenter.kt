@@ -8,9 +8,13 @@ import evdokimov.spacex.navigation.IScreens
 import evdokimov.spacex.news.domain.NewsInteractor
 import evdokimov.spacex.news.domain.entity.Launch
 import evdokimov.spacex.rx.toBehaviorFlowable
+import evdokimov.spacex.rx.withLatestFrom
 import evdokimov.spacex.user.domain.UserInteractor
+import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -37,6 +41,9 @@ class DetailsPresenter(val id: String) : BaseMvpPresenter<DetailsView>() {
     @Inject
     lateinit var favoritesInteractor: FavoritesInteractor
 
+    private val actionOnFavoriteIconClickSubject = PublishSubject.create<Unit>()
+    private val addToFavoriteSubject = BehaviorSubject.create<Unit>()
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
@@ -45,18 +52,39 @@ class DetailsPresenter(val id: String) : BaseMvpPresenter<DetailsView>() {
         val favoritesFlowable = favoritesInteractor.getAll()
                 .toBehaviorFlowable()
 
-        favoritesFlowable.map { it.contains(FavoriteLaunch(id)) }
+        val launchFlowable = favoritesFlowable.map { it.contains(FavoriteLaunch(id)) }
                 .flatMap { isFavorite ->
                     newsInteractor.getLaunchById(
                             id,
                             isFavorite
                     )
                 }
-                .subscribeOn(Schedulers.computation())
+
+        launchFlowable.subscribeOn(Schedulers.computation())
                 .observeOn(uiScheduler)
                 .subscribe(::setScreen) {
                     println("Error setDate: ${it.message}")
                 }
+                .autoDisposable()
+
+        actionOnFavoriteIconClickSubject.toFlowable(BackpressureStrategy.LATEST)
+                .withLatestFrom(isUserExists)
+                .map { it.second }
+                .subscribeOn(Schedulers.computation())
+                .observeOn(uiScheduler)
+                .subscribe(::checkAndAddToFavorite) {
+                    println("Error checkAndAddToFavorite: ${it.message}")
+                }
+                .autoDisposable()
+
+        addToFavoriteSubject.toFlowable(BackpressureStrategy.LATEST)
+                .withLatestFrom(launchFlowable)
+                .map { it.second }
+                .flatMapSingle { launch -> favoritesInteractor.onFavoriteIconClick(launch) }
+                .subscribeOn(Schedulers.computation())
+                .observeOn(uiScheduler)
+                .subscribe({/* no-op */ },
+                        { println("Error addToFavoriteSubject: ${it.message}") })
                 .autoDisposable()
     }
 
@@ -81,6 +109,17 @@ class DetailsPresenter(val id: String) : BaseMvpPresenter<DetailsView>() {
             )
         }
         launch.details?.let { viewState.setDetails(it) }
+        viewState.setFavoriteImage(launch.isFavorite)
+    }
+
+    fun onFavoriteIconClick() = actionOnFavoriteIconClickSubject.onNext(Unit)
+
+    private fun checkAndAddToFavorite(isAuthorized: Boolean) {
+        if (isAuthorized) {
+            addToFavoriteSubject.onNext(Unit)
+        } else {
+            viewState.showNeedLogIn()
+        }
     }
 
     fun backClick(): Boolean {
