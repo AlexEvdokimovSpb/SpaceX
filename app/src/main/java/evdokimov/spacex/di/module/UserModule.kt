@@ -2,6 +2,7 @@ package evdokimov.spacex.di.module
 
 import dagger.Module
 import dagger.Provides
+import evdokimov.spacex.di.ProdScheduler
 import evdokimov.spacex.rx.SchedulerProviderContract
 import evdokimov.spacex.user.data.api.UserApi
 import evdokimov.spacex.user.data.datasourse.local.UserLocalDataSourceApi
@@ -36,8 +37,8 @@ class UserModule {
     @Singleton
     @Provides
     fun userRemoteData(
-            userApi: UserApi,
-            @Named("scheduler") scheduler: SchedulerProviderContract
+            @Named("testUserApi") userApi: UserApi,
+            @ProdScheduler scheduler: SchedulerProviderContract
     ): UserRemoteDataSourceApi = UserRemoteDataSource(
             userApi,
             scheduler

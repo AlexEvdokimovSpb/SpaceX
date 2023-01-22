@@ -33,6 +33,7 @@ class ApiModule {
 
     @Provides
     @Singleton
+    @Named("testUserApi")
     fun userApi(): UserApi = UserMockServer()
 
     @Provides

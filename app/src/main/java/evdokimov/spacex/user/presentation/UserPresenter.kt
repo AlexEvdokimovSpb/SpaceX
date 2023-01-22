@@ -2,20 +2,21 @@ package evdokimov.spacex.user.presentation
 
 import com.github.terrakok.cicerone.Router
 import evdokimov.spacex.base.BaseMvpPresenter
+import evdokimov.spacex.di.ProdScheduler
 import evdokimov.spacex.favorites.domain.FavoritesInteractor
 import evdokimov.spacex.navigation.IScreens
 import evdokimov.spacex.news.domain.NewsInteractor
 import evdokimov.spacex.rx.SchedulerProviderContract
 import evdokimov.spacex.user.domain.UserInteractor
-import io.reactivex.rxjava3.core.*
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
-import javax.inject.Named
 
 class UserPresenter() : BaseMvpPresenter<UserView>() {
 
     @Inject
-    @field:Named("scheduler")
+    @ProdScheduler
     lateinit var scheduler: SchedulerProviderContract
 
     @Inject

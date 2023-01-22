@@ -4,6 +4,7 @@ import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import evdokimov.spacex.App
+import evdokimov.spacex.di.ProdScheduler
 import evdokimov.spacex.favorites.data.local.FavoritesLocalDataSource
 import evdokimov.spacex.favorites.data.local.FavoritesLocalDataSourceApi
 import evdokimov.spacex.news.data.datasourse.local.NewsLocalDataSource
@@ -12,7 +13,6 @@ import evdokimov.spacex.room.Database
 import evdokimov.spacex.rx.SchedulerProviderContract
 import evdokimov.spacex.user.data.datasourse.local.UserLocalDataSource
 import evdokimov.spacex.user.data.datasourse.local.UserLocalDataSourceApi
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -31,7 +31,7 @@ class DataBaseModule {
     @Provides
     fun newsLocal(
             db: Database,
-            @Named("scheduler") scheduler: SchedulerProviderContract
+            @ProdScheduler scheduler: SchedulerProviderContract
     ): NewsLocalDataSourceApi = NewsLocalDataSource(
             db.newsDao(),
             scheduler
@@ -41,7 +41,7 @@ class DataBaseModule {
     @Provides
     fun favoritesLocal(
             db: Database,
-            @Named("scheduler") scheduler: SchedulerProviderContract
+            @ProdScheduler scheduler: SchedulerProviderContract
     ): FavoritesLocalDataSourceApi = FavoritesLocalDataSource(
             db.favoriteDao(),
             scheduler
@@ -51,7 +51,7 @@ class DataBaseModule {
     @Provides
     fun userLocal(
             db: Database,
-            @Named("scheduler") scheduler: SchedulerProviderContract
+            @ProdScheduler scheduler: SchedulerProviderContract
     ): UserLocalDataSourceApi = UserLocalDataSource(
             db.userDao(),
             scheduler

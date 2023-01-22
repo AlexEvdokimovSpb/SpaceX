@@ -2,6 +2,7 @@ package evdokimov.spacex.di.module
 
 import dagger.Module
 import dagger.Provides
+import evdokimov.spacex.di.ProdScheduler
 import evdokimov.spacex.news.data.api.NewsApi
 import evdokimov.spacex.news.data.datasourse.local.NewsLocalDataSourceApi
 import evdokimov.spacex.news.data.datasourse.remote.NewsRemoteDataSource
@@ -10,7 +11,6 @@ import evdokimov.spacex.news.data.repository.*
 import evdokimov.spacex.news.domain.NewsFunctions
 import evdokimov.spacex.news.domain.NewsInteractor
 import evdokimov.spacex.rx.SchedulerProviderContract
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -42,7 +42,7 @@ class NewsModule {
     @Provides
     fun newsRemoteData(
             newsApi: NewsApi,
-            @Named("scheduler") scheduler: SchedulerProviderContract
+            @ProdScheduler scheduler: SchedulerProviderContract
     ): NewsRemoteDataSourceApi = NewsRemoteDataSource(
             newsApi,
             scheduler

@@ -2,17 +2,18 @@ package evdokimov.spacex.di.module
 
 import dagger.Module
 import dagger.Provides
+import evdokimov.spacex.di.ProdScheduler
+import evdokimov.spacex.di.TestScheduler
 import evdokimov.spacex.rx.*
-import javax.inject.Named
 
 @Module
 class SchedulerModule {
 
-    @Named("testScheduler")
+    @TestScheduler
     @Provides
     fun testScheduler(): SchedulerProviderContract = SchedulerProviderStub()
 
-    @Named("scheduler")
+    @ProdScheduler
     @Provides
     fun scheduler(): SchedulerProviderContract = SchedulerProvider()
 }

@@ -2,6 +2,7 @@ package evdokimov.spacex.details.presentation
 
 import com.github.terrakok.cicerone.Router
 import evdokimov.spacex.base.BaseMvpPresenter
+import evdokimov.spacex.di.ProdScheduler
 import evdokimov.spacex.favorites.domain.FavoritesInteractor
 import evdokimov.spacex.favorites.domain.entity.FavoriteLaunch
 import evdokimov.spacex.navigation.IScreens
@@ -13,12 +14,11 @@ import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
-import javax.inject.Named
 
 class DetailsPresenter(val id: String) : BaseMvpPresenter<DetailsView>() {
 
     @Inject
-    @field:Named("scheduler")
+    @ProdScheduler
     lateinit var scheduler: SchedulerProviderContract
 
     @Inject

@@ -2,17 +2,18 @@ package evdokimov.spacex.authorisation.presentation
 
 import com.github.terrakok.cicerone.Router
 import evdokimov.spacex.base.BaseMvpPresenter
+import evdokimov.spacex.di.ProdScheduler
 import evdokimov.spacex.navigation.IScreens
 import evdokimov.spacex.rx.SchedulerProviderContract
 import evdokimov.spacex.rx.withLatestFrom
 import evdokimov.spacex.user.domain.UserInteractor
 import evdokimov.spacex.user.domain.entity.User
-import io.reactivex.rxjava3.core.*
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.kotlin.combineLatest
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import javax.inject.Named
 
 class AuthorisationPresenter : BaseMvpPresenter<AuthorisationView>() {
 
@@ -22,7 +23,7 @@ class AuthorisationPresenter : BaseMvpPresenter<AuthorisationView>() {
     }
 
     @Inject
-    @field:Named("scheduler")
+    @ProdScheduler
     lateinit var scheduler: SchedulerProviderContract
 
     @Inject
