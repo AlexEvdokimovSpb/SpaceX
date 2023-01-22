@@ -21,9 +21,15 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun newsApi(@Named("baseUrl") baseUrl: String, gson: Gson): NewsApi =
-        Retrofit.Builder().baseUrl(baseUrl).addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create(gson)).build().create(NewsApi::class.java)
+    fun newsApi(
+            @Named("baseUrl") baseUrl: String,
+            gson: Gson
+    ): NewsApi = Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+            .create(NewsApi::class.java)
 
     @Provides
     @Singleton
@@ -32,5 +38,6 @@ class ApiModule {
     @Provides
     @Singleton
     fun gson(): Gson = GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-        .excludeFieldsWithoutExposeAnnotation().create()
+            .excludeFieldsWithoutExposeAnnotation()
+            .create()
 }

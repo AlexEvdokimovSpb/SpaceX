@@ -14,6 +14,7 @@ import javax.inject.Singleton
 @Component(
     modules = [
         AppModule::class,
+        SchedulerModule::class,
         CiceroneModule::class,
         ApiModule::class,
         NewsModule::class,
