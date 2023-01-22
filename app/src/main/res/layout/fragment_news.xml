@@ -71,29 +71,11 @@
                     app:cardCornerRadius="12dp"
                     app:cardElevation="10dp" />
             </LinearLayout>
-
-<!--            <androidx.appcompat.widget.Toolbar-->
-<!--                android:id="@+id/main.toolbar"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="?attr/actionBarSize"-->
-<!--                app:layout_collapseMode="pin"-->
-<!--                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">-->
-<!--                <androidx.cardview.widget.CardView-->
-<!--                    android:id="@+id/cardView5"-->
-<!--                    android:layout_width="80dp"-->
-<!--                    android:layout_height="80dp"-->
-<!--                    android:layout_marginVertical="@dimen/padding_size"-->
-<!--                    android:layout_marginStart="@dimen/padding_size"-->
-<!--                    app:cardBackgroundColor="@color/colorWhite60"-->
-<!--                    app:cardCornerRadius="12dp"-->
-<!--                    app:cardElevation="10dp" />-->
-<!--            </androidx.appcompat.widget.Toolbar>-->
-
         </com.google.android.material.appbar.CollapsingToolbarLayout>
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollNewsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -107,12 +89,16 @@
             android:paddingBottom="@dimen/padding_size" />
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/padding_size"
-        android:src="@drawable/ic_launcher_spacex"
-        app:layout_anchor="@id/mainAppbar"
-        app:layout_anchorGravity="bottom|right|end"
-        android:contentDescription="@string/latest_news" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/latestNewsButton"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:text="@string/latest_news"
+        android:textColor="@color/design_default_color_on_secondary"
+        android:textSize="13sp"
+        android:theme="@style/Theme.MaterialComponents"
+        app:backgroundTint="@color/design_default_color_secondary"
+        app:cornerRadius="30dp"
+        app:layout_anchor="@+id/nestedScrollNewsList"
+        app:layout_anchorGravity="top|center" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

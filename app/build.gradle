@@ -40,6 +40,9 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.7.20"
+
+    implementation "com.google.android.material:material:1.7.0"
+
     //Moxy
     implementation "com.github.moxy-community:moxy:2.2.1"
     kapt "com.github.moxy-community:moxy-compiler:2.2.1"
