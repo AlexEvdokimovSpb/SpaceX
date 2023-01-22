@@ -15,8 +15,6 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
 import javax.inject.Named
 
-private const val NUMBER_CHAR_TO_DELETE = 8
-
 class DetailsPresenter(val id: String) : BaseMvpPresenter<DetailsView>() {
 
     @Inject
@@ -92,19 +90,7 @@ class DetailsPresenter(val id: String) : BaseMvpPresenter<DetailsView>() {
                 viewState.loadImage(it)
             }
         }
-        launch.dateUtc?.let {
-            viewState.setDate(
-                    it.dropLast(NUMBER_CHAR_TO_DELETE)
-                            .replace(
-                                    '-',
-                                    ' '
-                            )
-                            .replace(
-                                    'T',
-                                    ' '
-                            )
-            )
-        }
+        launch.dateUtc?.let { viewState.setDate(it) }
         launch.details?.let { viewState.setDetails(it) }
         viewState.setFavoriteImage(launch.isFavorite)
     }

@@ -6,6 +6,11 @@ import evdokimov.spacex.room.entity.*
 
 class NewsMapper {
 
+    private companion object {
+
+        const val NUMBER_CHAR_TO_DELETE = 8
+    }
+
     fun createLaunch(
             launchEntity: LaunchEntity,
             isFavorite: Boolean = false
@@ -15,7 +20,7 @@ class NewsMapper {
             details = launchEntity.details,
             flightNumber = launchEntity.flightNumber,
             name = launchEntity.name,
-            dateUtc = launchEntity.dateUtc,
+            dateUtc = launchEntity.dateUtc?.let { formatDate(it) },
             id = launchEntity.id,
             isFavorite = isFavorite
     )
@@ -55,4 +60,14 @@ class NewsMapper {
     private fun createFlickrEntity(flickrDto: FlickrDto?): FlickrEntity = FlickrEntity(
             original = flickrDto?.original?.firstOrNull()
     )
+
+    private fun formatDate(date: String): String = date.dropLast(NUMBER_CHAR_TO_DELETE)
+            .replace(
+                    '-',
+                    ' '
+            )
+            .replace(
+                    'T',
+                    ' '
+            )
 }
