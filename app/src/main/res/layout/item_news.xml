@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/rv_height"
-    android:foreground="?attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/launchTitle"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_margin="@dimen/padding_size"
         android:textSize="@dimen/title_size"
         android:textStyle="bold"
@@ -22,7 +21,7 @@
     <TextView
         android:id="@+id/launchDate"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/launchTitle"
         app:layout_constraintTop_toBottomOf="@+id/launchTitle"
@@ -31,12 +30,11 @@
     <ImageView
         android:id="@+id/favoriteImage"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_margin="@dimen/padding_size"
         android:contentDescription="@string/favorite"
         android:src="@drawable/ic_baseline_favorite_border_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

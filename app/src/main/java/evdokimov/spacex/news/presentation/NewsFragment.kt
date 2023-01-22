@@ -62,10 +62,6 @@ class NewsFragment : BasicFragment<FragmentNewsBinding>(FragmentNewsBinding::inf
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_sort -> {
-                showMessage("сортировка")
-                return true
-            }
             R.id.menu_profile -> {
                 presenter.menuUserClick()
                 return true

@@ -4,11 +4,6 @@
     android:id="@+id/menu_main">
 
     <item
-        android:id="@+id/menu_sort"
-        android:icon="@drawable/ic_baseline_sort_24"
-        android:title="@string/menu_sort"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/menu_profile"
         android:icon="@drawable/ic_baseline_manage_accounts_24"
         android:title="@string/profile"
