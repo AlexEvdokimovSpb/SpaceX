@@ -5,9 +5,9 @@ import evdokimov.spacex.base.BaseMvpPresenter
 import evdokimov.spacex.favorites.domain.FavoritesInteractor
 import evdokimov.spacex.navigation.IScreens
 import evdokimov.spacex.news.domain.NewsInteractor
+import evdokimov.spacex.rx.SchedulerProviderContract
 import evdokimov.spacex.user.domain.UserInteractor
 import io.reactivex.rxjava3.core.*
-import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
 import javax.inject.Named
@@ -15,8 +15,8 @@ import javax.inject.Named
 class UserPresenter() : BaseMvpPresenter<UserView>() {
 
     @Inject
-    @field:Named("uiScheduler")
-    lateinit var uiScheduler: Scheduler
+    @field:Named("scheduler")
+    lateinit var scheduler: SchedulerProviderContract
 
     @Inject
     lateinit var router: Router
@@ -40,8 +40,8 @@ class UserPresenter() : BaseMvpPresenter<UserView>() {
 
         userInteractor.getUser()
                 .toFlowable()
-                .subscribeOn(Schedulers.computation())
-                .observeOn(uiScheduler)
+                .subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
                 .subscribe(viewState::setUser) {
                     println("Error getUser: ${it.message}")
                 }
@@ -54,8 +54,8 @@ class UserPresenter() : BaseMvpPresenter<UserView>() {
                             .andThen(newsInteractor.clear())
                             .andThen(Single.just(Unit))
                 }
-                .subscribeOn(Schedulers.computation())
-                .observeOn(uiScheduler)
+                .subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
                 .subscribe({ logOut() },
                         {
                             println("Error logOut: ${it.message}")

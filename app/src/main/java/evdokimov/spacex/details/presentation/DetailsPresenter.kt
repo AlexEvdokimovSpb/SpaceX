@@ -7,12 +7,9 @@ import evdokimov.spacex.favorites.domain.entity.FavoriteLaunch
 import evdokimov.spacex.navigation.IScreens
 import evdokimov.spacex.news.domain.NewsInteractor
 import evdokimov.spacex.news.domain.entity.Launch
-import evdokimov.spacex.rx.toBehaviorFlowable
-import evdokimov.spacex.rx.withLatestFrom
+import evdokimov.spacex.rx.*
 import evdokimov.spacex.user.domain.UserInteractor
 import io.reactivex.rxjava3.core.BackpressureStrategy
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
@@ -23,8 +20,8 @@ private const val NUMBER_CHAR_TO_DELETE = 8
 class DetailsPresenter(val id: String) : BaseMvpPresenter<DetailsView>() {
 
     @Inject
-    @field:Named("uiScheduler")
-    lateinit var uiScheduler: Scheduler
+    @field:Named("scheduler")
+    lateinit var scheduler: SchedulerProviderContract
 
     @Inject
     lateinit var router: Router
@@ -60,8 +57,8 @@ class DetailsPresenter(val id: String) : BaseMvpPresenter<DetailsView>() {
                     )
                 }
 
-        launchFlowable.subscribeOn(Schedulers.computation())
-                .observeOn(uiScheduler)
+        launchFlowable.subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
                 .subscribe(::setScreen) {
                     println("Error setDate: ${it.message}")
                 }
@@ -70,8 +67,8 @@ class DetailsPresenter(val id: String) : BaseMvpPresenter<DetailsView>() {
         actionOnFavoriteIconClickSubject.toFlowable(BackpressureStrategy.LATEST)
                 .withLatestFrom(isUserExists)
                 .map { it.second }
-                .subscribeOn(Schedulers.computation())
-                .observeOn(uiScheduler)
+                .subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
                 .subscribe(::checkAndAddToFavorite) {
                     println("Error checkAndAddToFavorite: ${it.message}")
                 }
@@ -81,8 +78,8 @@ class DetailsPresenter(val id: String) : BaseMvpPresenter<DetailsView>() {
                 .withLatestFrom(launchFlowable)
                 .map { it.second }
                 .flatMapSingle { launch -> favoritesInteractor.onFavoriteIconClick(launch) }
-                .subscribeOn(Schedulers.computation())
-                .observeOn(uiScheduler)
+                .subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
                 .subscribe({/* no-op */ },
                         { println("Error addToFavoriteSubject: ${it.message}") })
                 .autoDisposable()

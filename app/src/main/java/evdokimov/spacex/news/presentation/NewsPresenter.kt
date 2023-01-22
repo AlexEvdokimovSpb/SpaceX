@@ -6,12 +6,10 @@ import evdokimov.spacex.favorites.domain.FavoritesInteractor
 import evdokimov.spacex.navigation.IScreens
 import evdokimov.spacex.news.domain.NewsInteractor
 import evdokimov.spacex.news.domain.entity.Launch
-import evdokimov.spacex.rx.toBehaviorFlowable
-import evdokimov.spacex.rx.withLatestFrom
+import evdokimov.spacex.rx.*
 import evdokimov.spacex.user.domain.UserInteractor
 import io.reactivex.rxjava3.core.*
 import io.reactivex.rxjava3.kotlin.combineLatest
-import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
@@ -20,8 +18,8 @@ import javax.inject.Named
 class NewsPresenter : BaseMvpPresenter<NewsView>() {
 
     @Inject
-    @field:Named("uiScheduler")
-    lateinit var uiScheduler: Scheduler
+    @field:Named("scheduler")
+    lateinit var scheduler: SchedulerProviderContract
 
     @Inject
     lateinit var router: Router
@@ -58,8 +56,8 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
         val favoritesFlowable = favoritesInteractor.getAll()
                 .toBehaviorFlowable()
 
-        isUserExists.subscribeOn(Schedulers.io())
-                .observeOn(uiScheduler)
+        isUserExists.subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
                 .subscribe(::startScreen) {
                     println("Error isUserExists: ${it.message}")
                 }
@@ -70,11 +68,10 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
                     newsInteractor.fetchAuthorisedLaunches()
                             .andThen(Single.just(Unit))
                 }
-                .subscribeOn(Schedulers.io())
-                .observeOn(uiScheduler)
-                .subscribe(
-                        {/* no-op */
-                        },
+                .subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
+                .subscribe({/* no-op */
+                },
                         {
                             println("Error fetchAuthorisedLaunches: ${it.message}")
                         })
@@ -85,19 +82,18 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
                     newsInteractor.fetchUnauthorisedLaunches()
                             .andThen(Single.just(Unit))
                 }
-                .subscribeOn(Schedulers.io())
-                .observeOn(uiScheduler)
-                .subscribe(
-                        {/* no-op */
-                        },
+                .subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
+                .subscribe({/* no-op */
+                },
                         {
                             println("Error fetchAuthorisedLaunches: ${it.message}")
                         })
                 .autoDisposable()
 
         actionLatestNewsButtonSubject.toFlowable(BackpressureStrategy.LATEST)
-                .subscribeOn(Schedulers.computation())
-                .observeOn(uiScheduler)
+                .subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
                 .subscribe({ update() },
                         {
                             println("Error Latest News: ${it.message}")
@@ -106,8 +102,8 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
 
         actionOnFavoriteIconClickSubject.toFlowable(BackpressureStrategy.LATEST)
                 .withLatestFrom(isUserExists)
-                .subscribeOn(Schedulers.computation())
-                .observeOn(uiScheduler)
+                .subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
                 .subscribe(::checkAndAddToFavorite) {
                     println("Error checkAndAddToFavorite: ${it.message}")
                 }
@@ -115,8 +111,8 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
 
         addToFavoriteSubject.toFlowable(BackpressureStrategy.LATEST)
                 .flatMapSingle { launch -> favoritesInteractor.onFavoriteIconClick(launch) }
-                .subscribeOn(Schedulers.computation())
-                .observeOn(uiScheduler)
+                .subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
                 .subscribe({/* no-op */ },
                         { println("Error addToFavoriteSubject: ${it.message}") })
                 .autoDisposable()
@@ -126,16 +122,16 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
                 .flatMap { (_, favorites) ->
                     newsInteractor.getLaunches(favorites)
                 }
-                .subscribeOn(Schedulers.computation())
-                .observeOn(uiScheduler)
+                .subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
                 .subscribe(viewState::updateView) {
                     println("Error getAuthorisedLaunches: ${it.message}")
                 }
                 .autoDisposable()
 
         newsSelectSubject.toFlowable(BackpressureStrategy.LATEST)
-                .subscribeOn(Schedulers.computation())
-                .observeOn(uiScheduler)
+                .subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
                 .subscribe(::newsSelected) {
                     println("Error newsSelect: ${it.message}")
                 }
@@ -144,8 +140,8 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
         actionMenuUserClickSubject.toFlowable(BackpressureStrategy.LATEST)
                 .withLatestFrom(isUserExists)
                 .map { it.second }
-                .subscribeOn(Schedulers.computation())
-                .observeOn(uiScheduler)
+                .subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
                 .subscribe(::menuUserSelect) {
                     println("Error menuUserSelect: ${it.message}")
                 }

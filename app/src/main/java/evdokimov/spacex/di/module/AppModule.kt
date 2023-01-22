@@ -3,8 +3,7 @@ package evdokimov.spacex.di.module
 import dagger.Module
 import dagger.Provides
 import evdokimov.spacex.App
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Scheduler
+import evdokimov.spacex.rx.*
 import javax.inject.Named
 
 @Module
@@ -13,7 +12,11 @@ class AppModule(val app: App) {
     @Provides
     fun app(): App = app
 
-    @Named("uiScheduler")
+    @Named("testScheduler")
     @Provides
-    fun uiScheduler(): Scheduler = AndroidSchedulers.mainThread()
+    fun testScheduler(): SchedulerProviderContract = SchedulerProviderStub()
+
+    @Named("scheduler")
+    @Provides
+    fun scheduler(): SchedulerProviderContract = SchedulerProvider()
 }

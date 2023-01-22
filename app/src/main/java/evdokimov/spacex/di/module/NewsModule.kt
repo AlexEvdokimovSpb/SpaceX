@@ -9,6 +9,8 @@ import evdokimov.spacex.news.data.datasourse.remote.NewsRemoteDataSourceApi
 import evdokimov.spacex.news.data.repository.*
 import evdokimov.spacex.news.domain.NewsFunctions
 import evdokimov.spacex.news.domain.NewsInteractor
+import evdokimov.spacex.rx.SchedulerProviderContract
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -17,20 +19,34 @@ class NewsModule {
     @Singleton
     @Provides
     fun newsInteractor(
-        newsRepository: NewsRepositoryApi, newsFunctions: NewsFunctions
-    ): NewsInteractor = NewsInteractor(newsRepository, newsFunctions)
+            newsRepository: NewsRepositoryApi,
+            newsFunctions: NewsFunctions
+    ): NewsInteractor = NewsInteractor(
+            newsRepository,
+            newsFunctions
+    )
 
     @Singleton
     @Provides
     fun newsRepository(
-        newsRemoteDataSource: NewsRemoteDataSourceApi,
-        newsLocalDataSource: NewsLocalDataSourceApi,
-        newsMapper: NewsMapper
-    ): NewsRepositoryApi = NewsRepository(newsRemoteDataSource, newsLocalDataSource, newsMapper)
+            newsRemoteDataSource: NewsRemoteDataSourceApi,
+            newsLocalDataSource: NewsLocalDataSourceApi,
+            newsMapper: NewsMapper
+    ): NewsRepositoryApi = NewsRepository(
+            newsRemoteDataSource,
+            newsLocalDataSource,
+            newsMapper
+    )
 
     @Singleton
     @Provides
-    fun newsRemoteData(newsApi: NewsApi): NewsRemoteDataSourceApi = NewsRemoteDataSource(newsApi)
+    fun newsRemoteData(
+            newsApi: NewsApi,
+            @Named("scheduler") scheduler: SchedulerProviderContract
+    ): NewsRemoteDataSourceApi = NewsRemoteDataSource(
+            newsApi,
+            scheduler
+    )
 
     @Singleton
     @Provides

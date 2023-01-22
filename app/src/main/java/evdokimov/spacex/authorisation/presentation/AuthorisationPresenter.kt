@@ -3,13 +3,12 @@ package evdokimov.spacex.authorisation.presentation
 import com.github.terrakok.cicerone.Router
 import evdokimov.spacex.base.BaseMvpPresenter
 import evdokimov.spacex.navigation.IScreens
+import evdokimov.spacex.rx.SchedulerProviderContract
 import evdokimov.spacex.rx.withLatestFrom
 import evdokimov.spacex.user.domain.UserInteractor
 import evdokimov.spacex.user.domain.entity.User
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.*
 import io.reactivex.rxjava3.kotlin.combineLatest
-import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -23,8 +22,8 @@ class AuthorisationPresenter : BaseMvpPresenter<AuthorisationView>() {
     }
 
     @Inject
-    @field:Named("uiScheduler")
-    lateinit var uiScheduler: Scheduler
+    @field:Named("scheduler")
+    lateinit var scheduler: SchedulerProviderContract
 
     @Inject
     lateinit var router: Router
@@ -44,7 +43,6 @@ class AuthorisationPresenter : BaseMvpPresenter<AuthorisationView>() {
         super.onFirstViewAttach()
 
         val loginChangedFlowable = loginChangedSubject.toFlowable(BackpressureStrategy.LATEST)
-                .observeOn(Schedulers.computation())
                 .distinctUntilChanged()
                 .debounce(
                         INPUT_TEXT_DELAY,
@@ -52,7 +50,6 @@ class AuthorisationPresenter : BaseMvpPresenter<AuthorisationView>() {
                 )
 
         val passwordChangedFlowable = passwordChangedSubject.toFlowable(BackpressureStrategy.LATEST)
-                .observeOn(Schedulers.computation())
                 .distinctUntilChanged()
                 .debounce(
                         INPUT_TEXT_DELAY,
@@ -70,8 +67,8 @@ class AuthorisationPresenter : BaseMvpPresenter<AuthorisationView>() {
                             login
                     )
                 }
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
                 .subscribe(
                         ::confirmation
                 ) {
@@ -84,8 +81,8 @@ class AuthorisationPresenter : BaseMvpPresenter<AuthorisationView>() {
                     userInteractor.insertUser(it)
                             .andThen(Single.just(Unit))
                 }
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(scheduler.computation())
+                .observeOn(scheduler.ui())
                 .subscribe({
                     router.replaceScreen(screens.profile())
                 },
