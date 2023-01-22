@@ -21,4 +21,7 @@
     <string name="log_out">log out</string>
     <string name="log_in">log in to your profile</string>
 
+    <string name="start_image" translatable="false">start image</string>
+    <string name="latest_news">latest news</string>
+
 </resources>
