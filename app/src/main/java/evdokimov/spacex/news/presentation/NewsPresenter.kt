@@ -43,7 +43,9 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
 
     private val newsSelectSubject = PublishSubject.create<Launch>()
     private val actionUpdateSubject = PublishSubject.create<Unit>()
+
     private val actionMenuUserClickSubject = PublishSubject.create<Unit>()
+    private val actionLatestNewsButtonSubject = PublishSubject.create<Unit>()
 
     private val actionOnFavoriteIconClickSubject = PublishSubject.create<Launch>()
     private val addToFavoriteSubject = BehaviorSubject.create<Launch>()
@@ -70,9 +72,9 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(uiScheduler)
-                .subscribe({/* no-op */
-                    update()
-                },
+                .subscribe(
+                        {/* no-op */
+                        },
                         {
                             println("Error fetchAuthorisedLaunches: ${it.message}")
                         })
@@ -85,11 +87,20 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(uiScheduler)
-                .subscribe({/* no-op */
-                    update()
-                },
+                .subscribe(
+                        {/* no-op */
+                        },
                         {
                             println("Error fetchAuthorisedLaunches: ${it.message}")
+                        })
+                .autoDisposable()
+
+        actionLatestNewsButtonSubject.toFlowable(BackpressureStrategy.LATEST)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(uiScheduler)
+                .subscribe({ update() },
+                        {
+                            println("Error Latest News: ${it.message}")
                         })
                 .autoDisposable()
 
@@ -175,6 +186,8 @@ class NewsPresenter : BaseMvpPresenter<NewsView>() {
             router.navigateTo(screens.authorisation())
         }
     }
+
+    fun latestNewsButtonClick() = actionLatestNewsButtonSubject.onNext(Unit)
 
     fun backClick(): Boolean {
         router.exit()

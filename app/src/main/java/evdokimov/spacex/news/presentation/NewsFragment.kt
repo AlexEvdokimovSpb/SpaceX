@@ -11,7 +11,9 @@ import evdokimov.spacex.news.domain.entity.Launch
 import evdokimov.spacex.news.presentation.list.NewsAdapter
 import moxy.ktx.moxyPresenter
 
-class NewsFragment : BasicFragment<FragmentNewsBinding>(FragmentNewsBinding::inflate), NewsView, BackClickListener {
+class NewsFragment : BasicFragment<FragmentNewsBinding>(FragmentNewsBinding::inflate),
+        NewsView,
+        BackClickListener {
 
     companion object {
 
@@ -31,14 +33,32 @@ class NewsFragment : BasicFragment<FragmentNewsBinding>(FragmentNewsBinding::inf
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.main_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
+    override fun onCreateOptionsMenu(
+            menu: Menu,
+            inflater: MenuInflater
+    ) {
+        inflater.inflate(
+                R.menu.main_menu,
+                menu
+        )
+        super.onCreateOptionsMenu(
+                menu,
+                inflater
+        )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(
+            view: View,
+            savedInstanceState: Bundle?
+    ) {
+        super.onViewCreated(
+                view,
+                savedInstanceState
+        )
 
+        binding.latestNewsButton.setOnClickListener {
+            presenter.latestNewsButtonClick()
+        }
         initNewsAdapter()
         presenter.update()
     }
@@ -52,9 +72,10 @@ class NewsFragment : BasicFragment<FragmentNewsBinding>(FragmentNewsBinding::inf
         with(binding.newsList) {
             layoutManager = LinearLayoutManager(requireContext())
             addItemDecoration(
-                DividerItemDecoration(
-                    requireContext(), LinearLayoutManager.VERTICAL
-                )
+                    DividerItemDecoration(
+                            requireContext(),
+                            LinearLayoutManager.VERTICAL
+                    )
             )
             adapter = newsAdapter
         }
